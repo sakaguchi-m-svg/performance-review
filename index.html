@@ -307,27 +307,27 @@
 <header>
     <div style="display:flex;align-items:center;gap:14px;">
         <img id="companyLogo" src="LOGO%203.gif" alt="" style="height:44px;object-fit:contain;" onerror="this.style.display='none'">
-        <h1>🏭 <span data-ja="社員評価システム" data-pt="Sistema de Avaliação">社員評価システム</span></h1>
+        <h1>🏭 <span data-ja="社員評価システム" data-pt="Sistema de Avaliação" data-id="Sistem Evaluasi Karyawan">社員評価システム</span></h1>
     </div>
     <div style="display:flex;gap:10px;align-items:center;">
-        <button class="lang-btn" onclick="toggleLanguage()">🇧🇷 PT ／ 🇯🇵 JA</button>
+        <button id="lang-toggle-btn" class="lang-btn" onclick="toggleLanguage()">🇧🇷 PT</button>
         <button class="lang-btn" onclick="doLogout()" style="background:rgba(255,255,255,0.15);">🚪 Sair</button>
     </div>
 </header>
 
 <div class="tabs">
-    <button class="tab-btn active" data-tab="tab-novos"        onclick="switchTab(event)" data-ja="📝 新規登録"    data-pt="📝 Novo Registro"    >📝 新規登録</button>
-    <button class="tab-btn"        data-tab="tab-seguranca"    onclick="switchTab(event)" data-ja="🔒 安全"        data-pt="🔒 Segurança"        >🔒 安全</button>
-    <button class="tab-btn"        data-tab="tab-qualidade"    onclick="switchTab(event)" data-ja="✅ 品質"        data-pt="✅ Qualidade"        >✅ 品質</button>
-    <button class="tab-btn"        data-tab="tab-cooperacao"   onclick="switchTab(event)" data-ja="🤝 協力"        data-pt="🤝 Cooperação"       >🤝 協力</button>
-    <button class="tab-btn"        data-tab="tab-moral"        onclick="switchTab(event)" data-ja="💡 モラル"      data-pt="💡 Moral"            >💡 モラル</button>
-    <button class="tab-btn"        data-tab="tab-produtividade"onclick="switchTab(event)" data-ja="📈 生産性"      data-pt="📈 Produtividade"    >📈 生産性</button>
-    <button class="tab-btn"        data-tab="tab-presenca"     onclick="switchTab(event)" data-ja="📅 出勤"        data-pt="📅 Presença"         >📅 出勤</button>
-    <button class="tab-btn"        data-tab="tab-patrol"       onclick="switchTab(event)" data-ja="🚶 巡回"        data-pt="🚶 Patrulha"         >🚶 巡回</button>
-    <button class="tab-btn"        data-tab="tab-avaliacao"    onclick="switchTab(event)" data-ja="👤 個人評価"    data-pt="👤 Avaliação"        >👤 個人評価</button>
-    <button class="tab-btn"        data-tab="tab-lideres"      onclick="switchTab(event)" data-ja="👑 リーダー"   data-pt="👑 Líderes"          >👑 リーダー</button>
-    <button class="tab-btn"        data-tab="tab-pontuacao"    onclick="switchTab(event)" data-ja="📊 評価システム" data-pt="📊 Pontuação"         >📊 Pontuação</button>
-    <button class="tab-btn"        data-tab="tab-config"       onclick="switchTab(event)" data-ja="⚙️ 設定"       data-pt="⚙️ Config"           >⚙️ 設定</button>
+    <button class="tab-btn active" data-tab="tab-novos"        onclick="switchTab(event)" data-ja="📝 新規登録"    data-pt="📝 Novo Registro" data-id="📝 Entri Baru"    >📝 新規登録</button>
+    <button class="tab-btn"        data-tab="tab-seguranca"    onclick="switchTab(event)" data-ja="🔒 安全"        data-pt="🔒 Segurança" data-id="🔒 Keselamatan"        >🔒 安全</button>
+    <button class="tab-btn"        data-tab="tab-qualidade"    onclick="switchTab(event)" data-ja="✅ 品質"        data-pt="✅ Qualidade" data-id="✅ Kualitas"        >✅ 品質</button>
+    <button class="tab-btn"        data-tab="tab-cooperacao"   onclick="switchTab(event)" data-ja="🤝 協力"        data-pt="🤝 Cooperação" data-id="🤝 Kerjasama"       >🤝 協力</button>
+    <button class="tab-btn"        data-tab="tab-moral"        onclick="switchTab(event)" data-ja="💡 モラル"      data-pt="💡 Moral" data-id="💡 Moral"            >💡 モラル</button>
+    <button class="tab-btn"        data-tab="tab-produtividade"onclick="switchTab(event)" data-ja="📈 生産性"      data-pt="📈 Produtividade" data-id="📈 Produktivitas"    >📈 生産性</button>
+    <button class="tab-btn"        data-tab="tab-presenca"     onclick="switchTab(event)" data-ja="📅 出勤"        data-pt="📅 Presença" data-id="📅 Kehadiran"         >📅 出勤</button>
+    <button class="tab-btn"        data-tab="tab-patrol"       onclick="switchTab(event)" data-ja="🚶 巡回"        data-pt="🚶 Patrulha" data-id="🚶 Patroli"         >🚶 巡回</button>
+    <button class="tab-btn"        data-tab="tab-avaliacao"    onclick="switchTab(event)" data-ja="👤 個人評価"    data-pt="👤 Avaliação" data-id="👤 Penilaian"        >👤 個人評価</button>
+    <button class="tab-btn"        data-tab="tab-lideres"      onclick="switchTab(event)" data-ja="👑 リーダー"   data-pt="👑 Líderes" data-id="👑 Pemimpin"          >👑 リーダー</button>
+    <button class="tab-btn"        data-tab="tab-pontuacao"    onclick="switchTab(event)" data-ja="📊 評価システム" data-pt="📊 Pontuação" data-id="📊 Sistem Penilaian" data-id="📊 Sistem Penilaian"         >📊 Pontuação</button>
+    <button class="tab-btn"        data-tab="tab-config"       onclick="switchTab(event)" data-ja="⚙️ 設定"       data-pt="⚙️ Config" data-id="⚙️ Pengaturan"           >⚙️ 設定</button>
 </div>
 
 <!-- ════════════════════════════════════════════════════
@@ -335,57 +335,57 @@
 ════════════════════════════════════════════════════ -->
 <div id="tab-novos" class="tab-content active">
     <div class="card">
-        <h2>📝 <span data-ja="新規登録" data-pt="Novo Registro">新規登録</span></h2>
+        <h2>📝 <span data-ja="新規登録" data-pt="Novo Registro" data-id="Entri Baru" data-id="Entri Baru">新規登録</span></h2>
 
         <div class="grid-2">
             <div class="form-group">
-                <label>👤 <span data-ja="社員" data-pt="Funcionário">社員</span></label>
+                <label>👤 <span data-ja="社員" data-pt="Funcionário" data-id="Karyawan">社員</span></label>
                 <select id="novoEmp">
-                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione" data-id="Pilih">選択</span> —</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📌 <span data-ja="トピック" data-pt="Tópico">トピック</span></label>
+                <label>📌 <span data-ja="トピック" data-pt="Tópico" data-id="Topik">トピック</span></label>
                 <select id="novoTopic" onchange="showTopicFields()">
-                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
-                    <option value="seguranca"     data-ja="🔒 安全"       data-pt="🔒 Segurança"     >🔒 安全</option>
-                    <option value="qualidade"     data-ja="✅ 品質"       data-pt="✅ Qualidade"     >✅ 品質</option>
-                    <option value="cooperacao"    data-ja="🤝 協力"       data-pt="🤝 Cooperação"    >🤝 協力</option>
-                    <option value="moral"         data-ja="💡 モラル"     data-pt="💡 Moral"         >💡 モラル</option>
-                    <option value="produtividade" data-ja="📈 生産性"     data-pt="📈 Produtividade" >📈 生産性</option>
-                    <option value="presenca"      data-ja="📅 出勤"       data-pt="📅 Presença"      >📅 出勤</option>
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione" data-id="Pilih">選択</span> —</option>
+                    <option value="seguranca"     data-ja="🔒 安全"       data-pt="🔒 Segurança" data-id="🔒 Keselamatan"     >🔒 安全</option>
+                    <option value="qualidade"     data-ja="✅ 品質"       data-pt="✅ Qualidade" data-id="✅ Kualitas"     >✅ 品質</option>
+                    <option value="cooperacao"    data-ja="🤝 協力"       data-pt="🤝 Cooperação" data-id="🤝 Kerjasama"    >🤝 協力</option>
+                    <option value="moral"         data-ja="💡 モラル"     data-pt="💡 Moral" data-id="💡 Moral"         >💡 モラル</option>
+                    <option value="produtividade" data-ja="📈 生産性"     data-pt="📈 Produtividade" data-id="📈 Produktivitas" >📈 生産性</option>
+                    <option value="presenca"      data-ja="📅 出勤"       data-pt="📅 Presença" data-id="📅 Kehadiran"      >📅 出勤</option>
                 </select>
             </div>
         </div>
 
         <div class="form-group">
-            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)">Responsável (opcional)</span></label>
+            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)" data-id="Penanggung Jawab (opsional)">Responsável (opcional)</span></label>
             <select id="novoResp">
-                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável">Sem responsável</span> —</option>
+                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável" data-id="Tanpa penanggung jawab">Sem responsável</span> —</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>📅 <span data-ja="日付" data-pt="Data">日付</span></label>
+            <label>📅 <span data-ja="日付" data-pt="Data" data-id="Tanggal">日付</span></label>
             <div style="display:flex;gap:16px;margin-bottom:8px;">
                 <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:500;font-size:13px;color:#555;">
                     <input type="radio" name="dateMode" value="month" onchange="toggleDateMode()" checked>
-                    <span data-ja="年月" data-pt="Ano/Mês">年月</span>
+                    <span data-ja="年月" data-pt="Ano/Mês" data-id="Tahun/Bulan">年月</span>
                 </label>
                 <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:500;font-size:13px;color:#555;">
                     <input type="radio" name="dateMode" value="full" onchange="toggleDateMode()">
-                    <span data-ja="完全な日付" data-pt="Data Completa">完全な日付</span>
+                    <span data-ja="完全な日付" data-pt="Data Completa" data-id="Tanggal Lengkap">完全な日付</span>
                 </label>
             </div>
             <div id="date-month-mode" style="display:flex;gap:8px;">
                 <select id="novoYear" onchange="syncMonthDate()" style="flex:1;padding:9px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:14px;font-family:inherit;background:#fafbfd;"></select>
                 <select id="novoMonth" onchange="syncMonthDate()" style="flex:1;padding:9px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:14px;font-family:inherit;background:#fafbfd;">
-                    <option value="01" data-ja="1月"  data-pt="Janeiro" >1月</option><option value="02" data-ja="2月"  data-pt="Fevereiro">2月</option>
-                    <option value="03" data-ja="3月"  data-pt="Março"   >3月</option><option value="04" data-ja="4月"  data-pt="Abril"    >4月</option>
-                    <option value="05" data-ja="5月"  data-pt="Maio"    >5月</option><option value="06" data-ja="6月"  data-pt="Junho"    >6月</option>
-                    <option value="07" data-ja="7月"  data-pt="Julho"   >7月</option><option value="08" data-ja="8月"  data-pt="Agosto"   >8月</option>
-                    <option value="09" data-ja="9月"  data-pt="Setembro">9月</option><option value="10" data-ja="10月" data-pt="Outubro"  >10月</option>
-                    <option value="11" data-ja="11月" data-pt="Novembro">11月</option><option value="12" data-ja="12月" data-pt="Dezembro">12月</option>
+                    <option value="01" data-ja="1月"  data-pt="Janeiro" data-id="Januari" >1月</option><option value="02" data-ja="2月"  data-pt="Fevereiro" data-id="Februari">2月</option>
+                    <option value="03" data-ja="3月"  data-pt="Março" data-id="Maret"   >3月</option><option value="04" data-ja="4月"  data-pt="Abril" data-id="April"    >4月</option>
+                    <option value="05" data-ja="5月"  data-pt="Maio" data-id="Mei"    >5月</option><option value="06" data-ja="6月"  data-pt="Junho" data-id="Juni"    >6月</option>
+                    <option value="07" data-ja="7月"  data-pt="Julho" data-id="Juli"   >7月</option><option value="08" data-ja="8月"  data-pt="Agosto" data-id="Agustus"   >8月</option>
+                    <option value="09" data-ja="9月"  data-pt="Setembro" data-id="September">9月</option><option value="10" data-ja="10月" data-pt="Outubro" data-id="Oktober" data-id="Oktober"  >10月</option>
+                    <option value="11" data-ja="11月" data-pt="Novembro" data-id="November" data-id="November">11月</option><option value="12" data-ja="12月" data-pt="Dezembro" data-id="Desember" data-id="Desember">12月</option>
                 </select>
             </div>
             <div id="date-full-mode" style="display:none;">
@@ -397,7 +397,7 @@
         <div class="form-group">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
                 <input type="checkbox" id="novoTimeCheck" onchange="toggleTimeField()" style="width:auto;accent-color:#2b6cb0;width:15px;height:15px;">
-                🕐 <span data-ja="時間を追加する（任意）" data-pt="Adicionar horário (opcional)">時間を追加する（任意）</span>
+                🕐 <span data-ja="時間を追加する（任意）" data-pt="Adicionar horário (opcional)" data-id="Tambah waktu (opsional)">時間を追加する（任意）</span>
             </label>
             <input type="time" id="novoTime" class="hidden" style="margin-top:8px;">
         </div>
@@ -406,10 +406,10 @@
 
         <div class="btn-group">
             <button class="btn-primary" onclick="saveRecord()">
-                💾 <span data-ja="保存する" data-pt="Salvar">保存する</span>
+                💾 <span data-ja="保存する" data-pt="Salvar" data-id="Simpan Patroli">保存する</span>
             </button>
             <button class="btn-secondary" onclick="clearNovoForm()">
-                <span data-ja="クリア" data-pt="Limpar">クリア</span>
+                <span data-ja="クリア" data-pt="Limpar" data-id="Bersihkan">クリア</span>
             </button>
         </div>
     </div>
@@ -422,17 +422,17 @@
     <div class="card">
         <div class="topic-banner banner-seguranca">
             <span class="t-icon">🔒</span>
-            <h2 data-ja="安全" data-pt="Segurança">安全</h2>
+            <h2 data-ja="安全" data-pt="Segurança" data-id="Keselamatan">安全</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="seg-year" onchange="renderTopicList('seguranca')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="seg-emp" onchange="renderTopicList('seguranca')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -447,17 +447,17 @@
     <div class="card">
         <div class="topic-banner banner-qualidade">
             <span class="t-icon">✅</span>
-            <h2 data-ja="品質" data-pt="Qualidade">品質</h2>
+            <h2 data-ja="品質" data-pt="Qualidade" data-id="Kualitas">品質</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="qual-year" onchange="renderTopicList('qualidade')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="qual-emp" onchange="renderTopicList('qualidade')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -472,17 +472,17 @@
     <div class="card">
         <div class="topic-banner banner-cooperacao">
             <span class="t-icon">🤝</span>
-            <h2 data-ja="協力" data-pt="Cooperação">協力</h2>
+            <h2 data-ja="協力" data-pt="Cooperação" data-id="Kerjasama">協力</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="coop-year" onchange="renderTopicList('cooperacao')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="coop-emp" onchange="renderTopicList('cooperacao')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -497,17 +497,17 @@
     <div class="card">
         <div class="topic-banner banner-moral">
             <span class="t-icon">💡</span>
-            <h2 data-ja="モラル" data-pt="Moral">モラル</h2>
+            <h2 data-ja="モラル" data-pt="Moral" data-id="Moral">モラル</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="moral-year" onchange="renderTopicList('moral')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="moral-emp" onchange="renderTopicList('moral')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -522,17 +522,17 @@
     <div class="card">
         <div class="topic-banner banner-produtividade">
             <span class="t-icon">📈</span>
-            <h2 data-ja="生産性" data-pt="Produtividade">生産性</h2>
+            <h2 data-ja="生産性" data-pt="Produtividade" data-id="Produktivitas">生産性</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="prod-year" onchange="renderTopicList('produtividade')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="prod-emp" onchange="renderTopicList('produtividade')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -547,17 +547,17 @@
     <div class="card">
         <div class="topic-banner banner-presenca">
             <span class="t-icon">📅</span>
-            <h2 data-ja="出勤" data-pt="Presença">出勤</h2>
+            <h2 data-ja="出勤" data-pt="Presença" data-id="Kehadiran">出勤</h2>
         </div>
         <div class="filter-bar">
             <div class="form-group">
-                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <label data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</label>
                 <select id="pres-year" onchange="renderTopicList('presenca')"></select>
             </div>
             <div class="form-group">
-                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <label data-ja="社員でフィルター" data-pt="Funcionário" data-id="Karyawan">👤</label>
                 <select id="pres-emp" onchange="renderTopicList('presenca')">
-                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                    <option value="" data-ja="すべて" data-pt="Todos" data-id="Semua">すべて</option>
                 </select>
             </div>
         </div>
@@ -571,107 +571,107 @@
 <div id="tab-patrol" class="tab-content">
     <div class="topic-banner banner-patrol">
         <span class="t-icon">🚶</span>
-        <h2 data-ja="巡回記録" data-pt="Registro de Patrulha">巡回記録</h2>
+        <h2 data-ja="巡回記録" data-pt="Registro de Patrulha" data-id="Catatan Patroli">巡回記録</h2>
     </div>
 
     <!-- ── New patrol form ── -->
     <div class="card">
-        <h2>📝 <span data-ja="新規巡回記録" data-pt="Nova Patrulha">新規巡回記録</span></h2>
+        <h2>📝 <span data-ja="新規巡回記録" data-pt="Nova Patrulha" data-id="Catatan Patroli Baru">新規巡回記録</span></h2>
         <div class="grid-2">
             <div class="form-group">
-                <label>👤 <span data-ja="対象者" data-pt="Funcionário">対象者</span></label>
+                <label>👤 <span data-ja="対象者" data-pt="Funcionário" data-id="Karyawan">対象者</span></label>
                 <select id="patrol-emp">
-                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione" data-id="Pilih">選択</span> —</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📅 <span data-ja="日付" data-pt="Data">日付</span></label>
+                <label>📅 <span data-ja="日付" data-pt="Data" data-id="Tanggal">日付</span></label>
                 <input type="date" id="patrol-date">
             </div>
         </div>
 
         <div class="form-group">
-            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)">Responsável (opcional)</span></label>
+            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)" data-id="Penanggung Jawab (opsional)">Responsável (opcional)</span></label>
             <select id="patrol-resp">
-                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável">Sem responsável</span> —</option>
+                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável" data-id="Tanpa penanggung jawab">Sem responsável</span> —</option>
             </select>
         </div>
 
         <!-- Sub-section divider: Segurança -->
         <div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding-top:12px;border-top:1px solid #e8ecf0;">
             <span style="font-size:18px;">🔒</span>
-            <span style="font-weight:700;color:#b91c1c;font-size:15px;" data-ja="安全" data-pt="Segurança">安全</span>
+            <span style="font-weight:700;color:#b91c1c;font-size:15px;" data-ja="安全" data-pt="Segurança" data-id="Keselamatan">安全</span>
         </div>
         <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
                 <input type="checkbox" id="patrol-seg-noscore" onchange="togglePatrolNoScore('seg')">
-                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)">採点なし（記録のみ）</span>
+                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)" data-id="Tanpa nilai (hanya catatan)">採点なし（記録のみ）</span>
             </label>
         </div>
         <div class="form-group">
-            <label data-ja="結果" data-pt="Resultado">結果</label>
+            <label data-ja="結果" data-pt="Resultado" data-id="Hasil">結果</label>
             <select id="patrol-seg-result">
-                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo">ポジティブ</span></option>
-                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção">要注意</span></option>
-                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo">ネガティブ</span></option>
+                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo" data-id="Positif">ポジティブ</span></option>
+                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção" data-id="Perhatian">要注意</span></option>
+                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo" data-id="Negatif">ネガティブ</span></option>
             </select>
         </div>
         <div class="form-group">
-            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)">コメント（任意）</span></label>
+            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)" data-id="Komentar (opsional)">コメント（任意）</span></label>
             <textarea id="patrol-seg-comment" rows="2"></textarea>
         </div>
 
         <!-- Sub-section divider: Qualidade -->
         <div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding-top:12px;border-top:1px solid #e8ecf0;">
             <span style="font-size:18px;">✅</span>
-            <span style="font-weight:700;color:#047857;font-size:15px;" data-ja="品質" data-pt="Qualidade">品質</span>
+            <span style="font-weight:700;color:#047857;font-size:15px;" data-ja="品質" data-pt="Qualidade" data-id="Kualitas">品質</span>
         </div>
         <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
                 <input type="checkbox" id="patrol-qual-noscore" onchange="togglePatrolNoScore('qual')">
-                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)">採点なし（記録のみ）</span>
+                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)" data-id="Tanpa nilai (hanya catatan)">採点なし（記録のみ）</span>
             </label>
         </div>
         <div class="form-group">
-            <label data-ja="結果" data-pt="Resultado">結果</label>
+            <label data-ja="結果" data-pt="Resultado" data-id="Hasil">結果</label>
             <select id="patrol-qual-result">
-                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo">ポジティブ</span></option>
-                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção">要注意</span></option>
-                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo">ネガティブ</span></option>
+                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo" data-id="Positif">ポジティブ</span></option>
+                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção" data-id="Perhatian">要注意</span></option>
+                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo" data-id="Negatif">ネガティブ</span></option>
             </select>
         </div>
         <div class="form-group">
-            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)">コメント（任意）</span></label>
+            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)" data-id="Komentar (opsional)">コメント（任意）</span></label>
             <textarea id="patrol-qual-comment" rows="2"></textarea>
         </div>
 
         <div class="btn-group">
             <button class="btn-primary" onclick="savePatrol()">
-                💾 <span data-ja="保存する" data-pt="Salvar Patrulha">保存する</span>
+                💾 <span data-ja="保存する" data-pt="Salvar Patrulha" data-id="Simpan Patroli">保存する</span>
             </button>
         </div>
     </div>
 
     <!-- ── Patrol records list ── -->
     <div class="card">
-        <h2>📋 <span data-ja="巡回履歴" data-pt="Histórico de Patrulhas">巡回履歴</span></h2>
+        <h2>📋 <span data-ja="巡回履歴" data-pt="Histórico de Patrulhas" data-id="Riwayat Patroli">巡回履歴</span></h2>
         <div class="filter-bar">
             <div class="form-group">
-                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</span></label>
                 <select id="patrol-list-year" onchange="renderPatrolList()"></select>
             </div>
             <div class="form-group">
-                <label>👤 <span data-ja="社員" data-pt="Funcionário">社員</span></label>
+                <label>👤 <span data-ja="社員" data-pt="Funcionário" data-id="Karyawan">社員</span></label>
                 <select id="patrol-list-emp" onchange="renderPatrolList()">
-                    <option value="">— <span data-ja="全員" data-pt="Todos">全員</span> —</option>
+                    <option value="">— <span data-ja="全員" data-pt="Todos" data-id="Semua Orang">全員</span> —</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📌 <span data-ja="区分" data-pt="Tipo">区分</span></label>
+                <label>📌 <span data-ja="区分" data-pt="Tipo" data-id="Divisi">区分</span></label>
                 <select id="patrol-list-topic" onchange="renderPatrolList()">
-                    <option value="">— <span data-ja="全て" data-pt="Todos">全て</span> —</option>
-                    <option value="seguranca">🔒 <span data-ja="安全" data-pt="Segurança">安全</span></option>
-                    <option value="qualidade">✅ <span data-ja="品質" data-pt="Qualidade">品質</span></option>
+                    <option value="">— <span data-ja="全て" data-pt="Todos" data-id="Semua">全て</span> —</option>
+                    <option value="seguranca">🔒 <span data-ja="安全" data-pt="Segurança" data-id="Keselamatan">安全</span></option>
+                    <option value="qualidade">✅ <span data-ja="品質" data-pt="Qualidade" data-id="Kualitas">品質</span></option>
                 </select>
             </div>
         </div>
@@ -684,16 +684,16 @@
 ════════════════════════════════════════════════════ -->
 <div id="tab-avaliacao" class="tab-content">
     <div class="card">
-        <h2>👤 <span data-ja="個人評価" data-pt="Avaliação Individual">個人評価</span></h2>
+        <h2>👤 <span data-ja="個人評価" data-pt="Avaliação Individual" data-id="Penilaian Individual">個人評価</span></h2>
         <div class="grid-2">
             <div class="form-group">
-                <label>👤 <span data-ja="社員を選択" data-pt="Selecionar Funcionário">社員を選択</span></label>
+                <label>👤 <span data-ja="社員を選択" data-pt="Selecionar Funcionário" data-id="Pilih Karyawan">社員を選択</span></label>
                 <select id="aval-emp" onchange="renderAvaliacao()">
-                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione" data-id="Pilih">選択</span> —</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</span></label>
                 <select id="aval-year" onchange="renderAvaliacao()"></select>
             </div>
         </div>
@@ -707,18 +707,18 @@
 <div id="tab-lideres" class="tab-content">
     <div class="topic-banner banner-lideres">
         <span class="t-icon">👑</span>
-        <h2 data-ja="リーダー評価" data-pt="Avaliação de Líderes">リーダー評価</h2>
+        <h2 data-ja="リーダー評価" data-pt="Avaliação de Líderes" data-id="Penilaian Pemimpin">リーダー評価</h2>
     </div>
     <div class="card">
         <div class="grid-2">
             <div class="form-group">
-                <label>👑 <span data-ja="リーダーを選択" data-pt="Selecionar Líder">リーダーを選択</span></label>
+                <label>👑 <span data-ja="リーダーを選択" data-pt="Selecionar Líder" data-id="Pilih Pemimpin">リーダーを選択</span></label>
                 <select id="lider-emp" onchange="renderLideresContent()">
-                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione" data-id="Pilih">選択</span> —</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal" data-id="Tahun Fiskal">年度</span></label>
                 <select id="lider-year" onchange="renderLideresContent()"></select>
             </div>
         </div>
@@ -733,137 +733,137 @@
 
     <!-- HERO -->
     <div class="pontuacao-hero">
-        <h2>📊 <span data-ja="評価システムの仕組み" data-pt="Como funciona o Sistema de Avaliação">Como funciona o Sistema de Avaliação</span></h2>
-        <p data-ja="各社員は6つのトピックで評価されます。最終スコアはその平均値です。" data-pt="Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6.">Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6.</p>
+        <h2>📊 <span data-ja="評価システムの仕組み" data-pt="Como funciona o Sistema de Avaliação" data-id="Cara Kerja Sistem Penilaian">Como funciona o Sistema de Avaliação</span></h2>
+        <p data-ja="各社員は6つのトピックで評価されます。最終スコアはその平均値です。" data-pt="Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6." data-id="Setiap karyawan dievaluasi pada 6 topik. Skor akhir adalah rata-ratanya.">Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6.</p>
     </div>
 
     <!-- SECÇÃO 1: FÓRMULA FINAL -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">🎯 <span data-ja="計算式" data-pt="Fórmula Final">Fórmula Final</span></h3>
+        <h3 style="margin-top:0;color:#1a365d;">🎯 <span data-ja="計算式" data-pt="Fórmula Final" data-id="Formula">Fórmula Final</span></h3>
 
         <div class="base-box">
             <div class="base-pill">
                 <span>0,0 ~ 10,0</span>
-                <span data-ja="各トピックの範囲" data-pt="nota por tópico (0 a 10)">nota por tópico (0 a 10)</span>
+                <span data-ja="各トピックの範囲" data-pt="nota por tópico (0 a 10)" data-id="Jangkauan Setiap Topik">nota por tópico (0 a 10)</span>
             </div>
             <div style="font-size:28px;color:#94a3b8;">→</div>
             <div class="base-pill" style="border-color:#3b82f6;background:#eff6ff;">
-                <span data-ja="平均" data-pt="Média" style="color:#1d4ed8;">Média</span>
-                <span data-ja="6トピックの平均 = 最終スコア" data-pt="média dos 6 tópicos = nota final">média dos 6 tópicos = nota final</span>
+                <span data-ja="平均" data-pt="Média" data-id="Rata-rata" style="color:#1d4ed8;">Média</span>
+                <span data-ja="6トピックの平均 = 最終スコア" data-pt="média dos 6 tópicos = nota final" data-id="Rata-rata 6 topik = Skor akhir">média dos 6 tópicos = nota final</span>
             </div>
         </div>
 
         <div class="formula-box">
-            <div class="formula-text" data-ja="最終スコア = (安全 + 品質 + 協力 + モラル + 生産性 + 出勤) ÷ 6" data-pt="Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6">Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6</div>
-            <div class="formula-sub" data-ja="記録がないトピックは中立（5.0）として計算されます" data-pt="Tópico sem registros conta como neutro (5,0) na média">Tópico sem registros conta como neutro (5,0) na média</div>
+            <div class="formula-text" data-ja="最終スコア = (安全 + 品質 + 協力 + モラル + 生産性 + 出勤) ÷ 6" data-pt="Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6" data-id="Skor Akhir = (Keselamatan + Kualitas + Kerjasama + Moral + Produktivitas + Kehadiran) ÷ 6">Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6</div>
+            <div class="formula-sub" data-ja="記録がないトピックは中立（5.0）として計算されます" data-pt="Tópico sem registros conta como neutro (5,0) na média" data-id="Topik tanpa catatan dihitung sebagai netral (5.0)">Tópico sem registros conta como neutro (5,0) na média</div>
         </div>
 
         <div class="info-note">
-            <strong>💡 <span data-ja="重要なポイント" data-pt="Ponto importante">Ponto importante</span></strong>
-            <span data-ja="各トピックのスコアは0以下にも10以上にもなりません。記録が多いほど実際の姿を反映します。" data-pt="A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação.">A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação.</span>
+            <strong>💡 <span data-ja="重要なポイント" data-pt="Ponto importante" data-id="Poin Penting">Ponto importante</span></strong>
+            <span data-ja="各トピックのスコアは0以下にも10以上にもなりません。記録が多いほど実際の姿を反映します。" data-pt="A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação." data-id="Skor setiap topik tidak boleh kurang dari 0 atau lebih dari 10. Semakin banyak catatan, semakin mencerminkan situasi sebenarnya.">A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação.</span>
         </div>
     </div>
 
     <!-- SECÇÃO 2: TIPOS DE REGISTRO -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">⚖️ <span data-ja="登録の種類と役割" data-pt="Tipos de Registro e seu papel">Tipos de Registro e seu papel</span></h3>
-        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性以外のすべてのトピックに適用されます" data-pt="Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)">Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)</p>
+        <h3 style="margin-top:0;color:#1a365d;">⚖️ <span data-ja="登録の種類と役割" data-pt="Tipos de Registro e seu papel" data-id="Jenis dan Peran Catatan">Tipos de Registro e seu papel</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性以外のすべてのトピックに適用されます" data-pt="Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)" data-id="Berlaku untuk semua topik kecuali Produktivitas">Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)</p>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px;">
             <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;">
-                <div style="font-weight:700;color:#166534;font-size:15px;margin-bottom:6px;">✅ <span data-ja="ポジティブ" data-pt="Positivo">Positivo</span></div>
-                <div style="font-size:13px;color:#374151;" data-ja="良い行動・成果・改善を記録します。トピックのスコアが上がります。" data-pt="Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico.">Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico.</div>
+                <div style="font-weight:700;color:#166534;font-size:15px;margin-bottom:6px;">✅ <span data-ja="ポジティブ" data-pt="Positivo" data-id="Positif">Positivo</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="良い行動・成果・改善を記録します。トピックのスコアが上がります。" data-pt="Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico." data-id="Catat perilaku baik, hasil, dan peningkatan. Skor topik meningkat.">Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico.</div>
             </div>
             <div style="background:#fefce8;border:1.5px solid #fde047;border-radius:10px;padding:14px 16px;">
-                <div style="font-weight:700;color:#854d0e;font-size:15px;margin-bottom:6px;">⚠️ <span data-ja="注意" data-pt="Atenção">Atenção</span></div>
-                <div style="font-size:13px;color:#374151;" data-ja="記録に残しますが、スコアは変わりません。注意喚起・観察中の事案などに使います。" data-pt="Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais.">Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais.</div>
+                <div style="font-weight:700;color:#854d0e;font-size:15px;margin-bottom:6px;">⚠️ <span data-ja="注意" data-pt="Atenção" data-id="Perhatian">Atenção</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="記録に残しますが、スコアは変わりません。注意喚起・観察中の事案などに使います。" data-pt="Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais." data-id="Dicatat tetapi skor tidak berubah. Digunakan untuk peringatan dan kasus yang diamati.">Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais.</div>
             </div>
             <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px 16px;">
-                <div style="font-weight:700;color:#991b1b;font-size:15px;margin-bottom:6px;">❌ <span data-ja="ネガティブ" data-pt="Negativo">Negativo</span></div>
-                <div style="font-size:13px;color:#374151;" data-ja="規則違反・事故・業務上の問題を記録します。トピックのスコアが下がります。" data-pt="Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico.">Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico.</div>
+                <div style="font-weight:700;color:#991b1b;font-size:15px;margin-bottom:6px;">❌ <span data-ja="ネガティブ" data-pt="Negativo" data-id="Negatif">Negativo</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="規則違反・事故・業務上の問題を記録します。トピックのスコアが下がります。" data-pt="Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico." data-id="Catat pelanggaran aturan, kecelakaan, dan masalah pekerjaan. Skor topik berkurang.">Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico.</div>
             </div>
             <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:10px;padding:14px 16px;">
-                <div style="font-weight:700;color:#475569;font-size:15px;margin-bottom:6px;">📋 <span data-ja="採点なし" data-pt="Sem Pontuação">Sem Pontuação</span></div>
-                <div style="font-size:13px;color:#374151;" data-ja="点数に影響させずに記録だけ残したいときに使います。履歴として残ります。" data-pt="Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos.">Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos.</div>
+                <div style="font-weight:700;color:#475569;font-size:15px;margin-bottom:6px;">📋 <span data-ja="採点なし" data-pt="Sem Pontuação" data-id="Tanpa Nilai">Sem Pontuação</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="点数に影響させずに記録だけ残したいときに使います。履歴として残ります。" data-pt="Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos." data-id="Digunakan saat ingin merekam saja tanpa mempengaruhi skor. Tersimpan sebagai riwayat.">Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos.</div>
             </div>
         </div>
     </div>
 
     <!-- SECÇÃO 3: OS 6 TÓPICOS -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">📋 <span data-ja="評価対象の6トピック" data-pt="Os 6 Tópicos Avaliados">Os 6 Tópicos Avaliados</span></h3>
+        <h3 style="margin-top:0;color:#1a365d;">📋 <span data-ja="評価対象の6トピック" data-pt="Os 6 Tópicos Avaliados" data-id="6 Topik Evaluasi">Os 6 Tópicos Avaliados</span></h3>
         <div class="topic-grid">
 
             <div class="topic-explain-card" style="border-left:4px solid #ef4444;">
                 <div class="tec-header">
                     <span class="tec-icon">🔒</span>
                     <div>
-                        <div class="tec-name" style="color:#ef4444;" data-ja="安全" data-pt="Segurança">Segurança</div>
-                        <div class="tec-sub" data-ja="安全" data-pt="Segurança">安全</div>
+                        <div class="tec-name" style="color:#ef4444;" data-ja="安全" data-pt="Segurança" data-id="Keselamatan">Segurança</div>
+                        <div class="tec-sub" data-ja="安全" data-pt="Segurança" data-id="Keselamatan">安全</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="作業中の安全ルールの遵守を評価します。ヘルメット、手袋の着用、危険行為の有無、安全手順の遵守などを記録します。" data-pt="Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno.">Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno.</div>
-                <span class="tec-tag" style="background:#fee2e2;color:#991b1b;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+                <div class="tec-body" data-ja="作業中の安全ルールの遵守を評価します。ヘルメット、手袋の着用、危険行為の有無、安全手順の遵守などを記録します。" data-pt="Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno." data-id="Evaluasi kepatuhan terhadap aturan keselamatan saat bekerja. Catat penggunaan helm, sarung tangan, tindakan berbahaya, dan kepatuhan prosedur keselamatan.">Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno.</div>
+                <span class="tec-tag" style="background:#fee2e2;color:#991b1b;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo" data-id="Positif/Perhatian/Negatif">Positivo / Atenção / Negativo</span>
             </div>
 
             <div class="topic-explain-card" style="border-left:4px solid #10b981;">
                 <div class="tec-header">
                     <span class="tec-icon">✅</span>
                     <div>
-                        <div class="tec-name" style="color:#10b981;" data-ja="品質" data-pt="Qualidade">Qualidade</div>
-                        <div class="tec-sub" data-ja="品質" data-pt="Qualidade">品質</div>
+                        <div class="tec-name" style="color:#10b981;" data-ja="品質" data-pt="Qualidade" data-id="Kualitas">Qualidade</div>
+                        <div class="tec-sub" data-ja="品質" data-pt="Qualidade" data-id="Kualitas">品質</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="業務の正確さと丁寧さを評価します。誤仕分け、破損品、バーコード読み取りミスなどのミスを記録し、逆に丁寧な作業も記録します。" data-pt="Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui.">Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui.</div>
-                <span class="tec-tag" style="background:#d1fae5;color:#065f46;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+                <div class="tec-body" data-ja="業務の正確さと丁寧さを評価します。誤仕分け、破損品、バーコード読み取りミスなどのミスを記録し、逆に丁寧な作業も記録します。" data-pt="Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui." data-id="Evaluasi akurasi dan kelancaran pekerjaan. Catat kesalahan seperti sortir salah, barang rusak, kesalahan pembacaan barcode, dan juga catat pekerjaan yang teliti.">Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui.</div>
+                <span class="tec-tag" style="background:#d1fae5;color:#065f46;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo" data-id="Positif/Perhatian/Negatif">Positivo / Atenção / Negativo</span>
             </div>
 
             <div class="topic-explain-card" style="border-left:4px solid #3b82f6;">
                 <div class="tec-header">
                     <span class="tec-icon">🤝</span>
                     <div>
-                        <div class="tec-name" style="color:#3b82f6;" data-ja="協力" data-pt="Cooperação">Cooperação</div>
-                        <div class="tec-sub" data-ja="協力" data-pt="Cooperação">協力</div>
+                        <div class="tec-name" style="color:#3b82f6;" data-ja="協力" data-pt="Cooperação" data-id="Kerjasama">Cooperação</div>
+                        <div class="tec-sub" data-ja="協力" data-pt="Cooperação" data-id="Kerjasama">協力</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="チームワークと協調性を評価します。同僚への支援、指示への従い方、チームへの貢献姿勢などを記録します。" data-pt="Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo.">Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo.</div>
-                <span class="tec-tag" style="background:#dbeafe;color:#1e40af;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+                <div class="tec-body" data-ja="チームワークと協調性を評価します。同僚への支援、指示への従い方、チームへの貢献姿勢などを記録します。" data-pt="Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo." data-id="Evaluasi kerjasama tim dan kolaborasi. Catat dukungan ke rekan kerja, kepatuhan terhadap instruksi, dan kontribusi tim.">Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo.</div>
+                <span class="tec-tag" style="background:#dbeafe;color:#1e40af;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo" data-id="Positif/Perhatian/Negatif">Positivo / Atenção / Negativo</span>
             </div>
 
             <div class="topic-explain-card" style="border-left:4px solid #f59e0b;">
                 <div class="tec-header">
                     <span class="tec-icon">💡</span>
                     <div>
-                        <div class="tec-name" style="color:#b45309;" data-ja="モラル" data-pt="Moral">Moral</div>
-                        <div class="tec-sub" data-ja="モラル" data-pt="Moral">モラル</div>
+                        <div class="tec-name" style="color:#b45309;" data-ja="モラル" data-pt="Moral" data-id="Moral">Moral</div>
+                        <div class="tec-sub" data-ja="モラル" data-pt="Moral" data-id="Moral">モラル</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="職場での態度と行動を評価します。服装・言葉遣い・携帯電話の使用・作業中の態度などを記録します。" data-pt="Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral.">Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral.</div>
-                <span class="tec-tag" style="background:#fef3c7;color:#92400e;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+                <div class="tec-body" data-ja="職場での態度と行動を評価します。服装・言葉遣い・携帯電話の使用・作業中の態度などを記録します。" data-pt="Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral." data-id="Evaluasi sikap dan perilaku di tempat kerja. Catat penampilan, cara berbicara, penggunaan ponsel, dan sikap saat bekerja.">Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral.</div>
+                <span class="tec-tag" style="background:#fef3c7;color:#92400e;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo" data-id="Positif/Perhatian/Negatif">Positivo / Atenção / Negativo</span>
             </div>
 
             <div class="topic-explain-card" style="border-left:4px solid #8b5cf6;">
                 <div class="tec-header">
                     <span class="tec-icon">📈</span>
                     <div>
-                        <div class="tec-name" style="color:#7c3aed;" data-ja="生産性" data-pt="Produtividade">Produtividade</div>
-                        <div class="tec-sub" data-ja="生産性" data-pt="Produtividade">生産性</div>
+                        <div class="tec-name" style="color:#7c3aed;" data-ja="生産性" data-pt="Produtividade" data-id="Produktivitas">Produtividade</div>
+                        <div class="tec-sub" data-ja="生産性" data-pt="Produtividade" data-id="Produktivitas">生産性</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="設定された目標に対する実績で評価します。目標比±の範囲により自動分類されます。詳細は下のセクションをご覧ください。" data-pt="Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo.">Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo.</div>
-                <span class="tec-tag" style="background:#ede9fe;color:#5b21b6;" data-ja="自動分類（特別ルール）" data-pt="Classificação automática (regras especiais)">Classificação automática (regras especiais)</span>
+                <div class="tec-body" data-ja="設定された目標に対する実績で評価します。目標比±の範囲により自動分類されます。詳細は下のセクションをご覧ください。" data-pt="Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo." data-id="Evaluasi berdasarkan pencapaian terhadap target yang ditetapkan. Diklasifikasikan secara otomatis berdasarkan persentase target. Lihat bagian di bawah untuk detail.">Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo.</div>
+                <span class="tec-tag" style="background:#ede9fe;color:#5b21b6;" data-ja="自動分類（特別ルール）" data-pt="Classificação automática (regras especiais)" data-id="Klasifikasi Otomatis (Aturan Khusus)">Classificação automática (regras especiais)</span>
             </div>
 
             <div class="topic-explain-card" style="border-left:4px solid #06b6d4;">
                 <div class="tec-header">
                     <span class="tec-icon">📅</span>
                     <div>
-                        <div class="tec-name" style="color:#0e7490;" data-ja="出勤" data-pt="Presença">Presença</div>
-                        <div class="tec-sub" data-ja="出勤" data-pt="Presença">出勤</div>
+                        <div class="tec-name" style="color:#0e7490;" data-ja="出勤" data-pt="Presença" data-id="Kehadiran">Presença</div>
+                        <div class="tec-sub" data-ja="出勤" data-pt="Presença" data-id="Kehadiran">出勤</div>
                     </div>
                 </div>
-                <div class="tec-body" data-ja="出勤率と時間厳守を評価します。無断欠勤、遅刻、早退は記録されます。出勤率が良ければポジティブとして記録できます。" data-pt="Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo.">Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo.</div>
-                <span class="tec-tag" style="background:#cffafe;color:#155e75;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+                <div class="tec-body" data-ja="出勤率と時間厳守を評価します。無断欠勤、遅刻、早退は記録されます。出勤率が良ければポジティブとして記録できます。" data-pt="Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo." data-id="Evaluasi tingkat kehadiran dan ketepatan waktu. Catat ketidakhadiran tanpa izin, keterlambatan, dan pulang lebih awal. Kehadiran yang baik dapat dicatat sebagai positif.">Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo.</div>
+                <span class="tec-tag" style="background:#cffafe;color:#155e75;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo" data-id="Positif/Perhatian/Negatif">Positivo / Atenção / Negativo</span>
             </div>
 
         </div>
@@ -871,90 +871,90 @@
 
     <!-- SECÇÃO 4: PRODUTIVIDADE (REGRAS ESPECIAIS) -->
     <div class="card" style="border-left:5px solid #8b5cf6;">
-        <h3 style="margin-top:0;color:#7c3aed;">📈 <span data-ja="生産性の特別ルール" data-pt="Regras Especiais: Produtividade">Regras Especiais: Produtividade</span></h3>
-        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性は目標と実績の差によって自動分類されます。手動でポジティブ/ネガティブを選ぶ必要はありません。" data-pt="Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente.">Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente.</p>
+        <h3 style="margin-top:0;color:#7c3aed;">📈 <span data-ja="生産性の特別ルール" data-pt="Regras Especiais: Produtividade" data-id="Aturan Khusus Produktivitas">Regras Especiais: Produtividade</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性は目標と実績の差によって自動分類されます。手動でポジティブ/ネガティブを選ぶ必要はありません。" data-pt="Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente." data-id="Produktivitas diklasifikasikan secara otomatis berdasarkan perbedaan antara target dan pencapaian. Tidak perlu memilih Positif/Negatif secara manual.">Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente.</p>
 
         <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
-            <p style="margin:0;font-size:13px;color:#4c1d95;font-weight:600;" data-ja="例：目標 = 70 の場合" data-pt="Exemplo com meta = 70">Exemplo com meta = 70</p>
+            <p style="margin:0;font-size:13px;color:#4c1d95;font-weight:600;" data-ja="例：目標 = 70 の場合" data-pt="Exemplo com meta = 70" data-id="Contoh: Jika target = 70">Exemplo com meta = 70</p>
         </div>
 
         <div class="prod-rules-box">
             <div class="prod-rule-card prc-green">
                 <div class="prc-icon">🚀</div>
-                <div class="prc-label" data-ja="目標大幅超過" data-pt="Acima da Meta (+10)">Acima da Meta (+10)</div>
-                <div class="prc-range" data-ja="例：81以上（目標+10超え）" data-pt="Ex: val &gt; 80 (meta + 10)">Ex: val &gt; 80 (meta + 10)</div>
-                <div class="prc-effect" style="color:#16a34a;font-weight:700;" data-ja="🚀 スコアアップ" data-pt="🚀 Eleva a nota">🚀 Eleva a nota</div>
+                <div class="prc-label" data-ja="目標大幅超過" data-pt="Acima da Meta (+10)" data-id="Jauh Melebihi Target">Acima da Meta (+10)</div>
+                <div class="prc-range" data-ja="例：81以上（目標+10超え）" data-pt="Ex: val &gt; 80 (meta + 10)" data-id="Contoh: 81 atau lebih (lebih dari target+10)">Ex: val &gt; 80 (meta + 10)</div>
+                <div class="prc-effect" style="color:#16a34a;font-weight:700;" data-ja="🚀 スコアアップ" data-pt="🚀 Eleva a nota" data-id="🚀 Peningkatan Skor">🚀 Eleva a nota</div>
             </div>
             <div class="prod-rule-card prc-gray">
                 <div class="prc-icon">➡️</div>
-                <div class="prc-label" data-ja="目標付近（上）" data-pt="Na faixa da meta">Na faixa da meta</div>
-                <div class="prc-range" data-ja="例：70〜80（目標〜目標+10）" data-pt="Ex: 70 ≤ val ≤ 80">Ex: 70 ≤ val ≤ 80</div>
-                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標内" data-pt="✅ Na meta">✅ Na meta</div>
+                <div class="prc-label" data-ja="目標付近（上）" data-pt="Na faixa da meta" data-id="Dekat Target (Atas)">Na faixa da meta</div>
+                <div class="prc-range" data-ja="例：70〜80（目標〜目標+10）" data-pt="Ex: 70 ≤ val ≤ 80" data-id="Contoh: 70-80 (target hingga target+10)">Ex: 70 ≤ val ≤ 80</div>
+                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標内" data-pt="✅ Na meta" data-id="✅ Dalam target">✅ Na meta</div>
             </div>
             <div class="prod-rule-card prc-gray">
                 <div class="prc-icon">➡️</div>
-                <div class="prc-label" data-ja="目標近く（下）" data-pt="Próximo da meta (−5)">Próximo da meta (−5)</div>
-                <div class="prc-range" data-ja="例：65〜69（目標−5〜目標未満）" data-pt="Ex: 65 ≤ val ≤ 69">Ex: 65 ≤ val ≤ 69</div>
-                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標付近" data-pt="✅ Próximo da meta">✅ Próximo da meta</div>
+                <div class="prc-label" data-ja="目標近く（下）" data-pt="Próximo da meta" data-id="Dekat Target (Bawah)">Próximo da meta</div>
+                <div class="prc-range" data-ja="例：65〜69（目標−5〜目標未満）" data-pt="Ex: 65 ≤ val &lt; meta" data-id="Contoh: 65-69 (target−5 hingga di bawah target)">Ex: 65 ≤ val &lt; meta</div>
+                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標付近（減点なし）" data-pt="✅ Sem penalidade" data-id="✅ Dekat target (tanpa pengurangan)">✅ Sem penalidade</div>
             </div>
             <div class="prod-rule-card prc-orange">
                 <div class="prc-icon">⚠️</div>
-                <div class="prc-label" data-ja="目標大幅未達" data-pt="Abaixo da meta (−5)">Abaixo da meta (−5)</div>
-                <div class="prc-range" data-ja="例：64以下（目標−5未満）" data-pt="Ex: val &lt; 65 (abaixo de meta − 5)">Ex: val &lt; 65 (abaixo de meta − 5)</div>
-                <div class="prc-effect" style="color:#c2410c;" data-ja="特別ルール（下記参照）" data-pt="Regra especial (ver abaixo)">Regra especial (ver abaixo)</div>
+                <div class="prc-label" data-ja="目標大幅未達" data-pt="Abaixo da meta" data-id="Jauh dari Target">Abaixo da meta</div>
+                <div class="prc-range" data-ja="例：64以下（目標未満）" data-pt="Ex: val &lt; meta − 5" data-id="Contoh: 64 atau kurang (di bawah target)">Ex: val &lt; meta − 5</div>
+                <div class="prc-effect" style="color:#c2410c;" data-ja="特別ルール（下記参照）" data-pt="Regra especial (ver abaixo)" data-id="Aturan Khusus (Lihat di bawah)">Regra especial (ver abaixo)</div>
             </div>
         </div>
 
         <div class="abaixo-rule-box">
-            <h4>⚠️ <span data-ja="「目標大幅未達」の特別ルール" data-pt="Regra especial para 'Abaixo da meta'">Regra especial para "Abaixo da meta"</span></h4>
-            <p style="margin:0 0 10px 0;font-size:13px;color:#7c2d12;" data-ja="最初の4件は注意扱い（スコアへの影響なし）。5件目以降はスコアが下がります。回復の余地を与えるためのルールです。" data-pt="Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar.">Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar.</p>
+            <h4>⚠️ <span data-ja="「目標大幅未達」の特別ルール" data-pt="Regra especial para 'Abaixo da meta'" data-id="Aturan khusus untuk 'Jauh dari target'">Regra especial para "Abaixo da meta"</span></h4>
+            <p style="margin:0 0 10px 0;font-size:13px;color:#7c2d12;" data-ja="最初の4件は注意扱い（スコアへの影響なし）。5件目以降はスコアが下がります。回復の余地を与えるためのルールです。" data-pt="Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar." data-id="4 catatan pertama ditangani sebagai perhatian (tanpa pengaruh skor). Dari catatan ke-5 seterusnya, skor berkurang. Ini adalah aturan untuk memberikan kesempatan pemulihan.">Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar.</p>
             <div class="abaixo-timeline">
-                <div class="atl-step atl-free">1º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-step atl-free">1º<br><span data-ja="注意" data-pt="Atenção" data-id="Perhatian">Atenção</span></div>
                 <div class="atl-arrow">→</div>
-                <div class="atl-step atl-free">2º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-step atl-free">2º<br><span data-ja="注意" data-pt="Atenção" data-id="Perhatian">Atenção</span></div>
                 <div class="atl-arrow">→</div>
-                <div class="atl-step atl-free">3º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-step atl-free">3º<br><span data-ja="注意" data-pt="Atenção" data-id="Perhatian">Atenção</span></div>
                 <div class="atl-arrow">→</div>
-                <div class="atl-step atl-free">4º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-step atl-free">4º<br><span data-ja="注意" data-pt="Atenção" data-id="Perhatian">Atenção</span></div>
                 <div class="atl-arrow">→</div>
-                <div class="atl-step atl-pen"><span data-ja="5回目以降" data-pt="5º em diante">5º em diante</span><br><span data-ja="スコアダウン" data-pt="score ↓">score ↓</span></div>
+                <div class="atl-step atl-pen"><span data-ja="5回目以降" data-pt="5º em diante" data-id="Dari 5 kali ke atas">5º em diante</span><br><span data-ja="スコアダウン" data-pt="score ↓">score ↓</span></div>
             </div>
         </div>
     </div>
 
     <!-- SECÇÃO 5: CLASSIFICAÇÃO FINAL -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">🏆 <span data-ja="最終スコアの分類" data-pt="Classificação da Nota Final">Classificação da Nota Final</span></h3>
-        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="6つのトピックの平均スコアで最終評価が決まります。" data-pt="A nota final (média dos 6 tópicos) determina a classificação geral do funcionário.">A nota final (média dos 6 tópicos) determina a classificação geral do funcionário.</p>
+        <h3 style="margin-top:0;color:#1a365d;">🏆 <span data-ja="最終スコアの分類" data-pt="Classificação da Nota Final" data-id="Klasifikasi Skor Akhir">Classificação da Nota Final</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="6つのトピックの平均スコアで最終評価が決まります。" data-pt="A nota final (média dos 6 tópicos) determina a classificação geral do funcionário." data-id="Penilaian akhir ditentukan oleh rata-rata 6 topik.">A nota final (média dos 6 tópicos) determina a classificação geral do funcionário.</p>
 
         <table class="class-table">
             <thead>
                 <tr>
-                    <th data-ja="分類" data-pt="Classificação">Classificação</th>
-                    <th data-ja="点数範囲" data-pt="Faixa de Nota">Faixa de Nota</th>
-                    <th data-ja="意味" data-pt="Significado">Significado</th>
+                    <th data-ja="分類" data-pt="Classificação" data-id="Klasifikasi">Classificação</th>
+                    <th data-ja="点数範囲" data-pt="Faixa de Nota" data-id="Jangkauan Skor">Faixa de Nota</th>
+                    <th data-ja="意味" data-pt="Significado" data-id="Arti">Significado</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><span class="class-dot" style="background:#10b981;"></span><strong style="color:#065f46;" data-ja="平均以上" data-pt="Acima da Média">Acima da Média</strong></td>
+                    <td><span class="class-dot" style="background:#10b981;"></span><strong style="color:#065f46;" data-ja="平均以上" data-pt="Acima da Média" data-id="Di Atas Rata-rata">Acima da Média</strong></td>
                     <td><strong style="color:#10b981;">7,1 ~ 10,0</strong></td>
-                    <td style="font-size:13px;color:#475569;" data-ja="目標を上回る高い実績。継続して表彰・インセンティブの対象。" data-pt="Desempenho consistentemente acima do esperado. Funcionário de referência positiva.">Desempenho consistentemente acima do esperado. Funcionário de referência positiva.</td>
+                    <td style="font-size:13px;color:#475569;" data-ja="目標を上回る高い実績。継続して表彰・インセンティブの対象。" data-pt="Desempenho consistentemente acima do esperado. Funcionário de referência positiva." data-id="Pencapaian tinggi yang melebihi target. Terus menjadi sasaran penghargaan dan insentif.">Desempenho consistentemente acima do esperado. Funcionário de referência positiva.</td>
                 </tr>
                 <tr>
-                    <td><span class="class-dot" style="background:#f59e0b;"></span><strong style="color:#b45309;" data-ja="平均" data-pt="Média">Média</strong></td>
+                    <td><span class="class-dot" style="background:#f59e0b;"></span><strong style="color:#b45309;" data-ja="平均" data-pt="Média" data-id="Rata-rata">Média</strong></td>
                     <td><strong style="color:#f59e0b;">5,0 ~ 7,0</strong></td>
-                    <td style="font-size:13px;color:#475569;" data-ja="期待される水準を満たしています。安定した成果を出しています。" data-pt="Atende às expectativas. Desempenho estável dentro do padrão esperado.">Atende às expectativas. Desempenho estável dentro do padrão esperado.</td>
+                    <td style="font-size:13px;color:#475569;" data-ja="期待される水準を満たしています。安定した成果を出しています。" data-pt="Atende às expectativas. Desempenho estável dentro do padrão esperado." data-id="Memenuhi standar yang diharapkan. Menghasilkan kinerja yang stabil.">Atende às expectativas. Desempenho estável dentro do padrão esperado.</td>
                 </tr>
                 <tr>
-                    <td><span class="class-dot" style="background:#ef4444;"></span><strong style="color:#991b1b;" data-ja="平均以下" data-pt="Abaixo da Média">Abaixo da Média</strong></td>
+                    <td><span class="class-dot" style="background:#ef4444;"></span><strong style="color:#991b1b;" data-ja="平均以下" data-pt="Abaixo da Média" data-id="Di Bawah Rata-rata">Abaixo da Média</strong></td>
                     <td><strong style="color:#ef4444;">3,0 ~ 4,9</strong></td>
-                    <td style="font-size:13px;color:#475569;" data-ja="いくつかの問題が確認されています。フォローアップと改善計画が必要です。" data-pt="Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria.">Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria.</td>
+                    <td style="font-size:13px;color:#475569;" data-ja="いくつかの問題が確認されています。フォローアップと改善計画が必要です。" data-pt="Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria." data-id="Beberapa masalah teridentifikasi. Tindak lanjut dan rencana perbaikan diperlukan.">Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria.</td>
                 </tr>
                 <tr>
-                    <td><span class="class-dot" style="background:#6b7280;"></span><strong style="color:#374151;" data-ja="大幅に平均以下" data-pt="Muito Abaixo">Muito Abaixo</strong></td>
+                    <td><span class="class-dot" style="background:#6b7280;"></span><strong style="color:#374151;" data-ja="大幅に平均以下" data-pt="Muito Abaixo" data-id="Jauh di bawah rata-rata">Muito Abaixo</strong></td>
                     <td><strong style="color:#6b7280;">0,0 ~ 2,9</strong></td>
-                    <td style="font-size:13px;color:#475569;" data-ja="多くの問題が確認されており、緊急の対応が必要です。" data-pt="Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança.">Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança.</td>
+                    <td style="font-size:13px;color:#475569;" data-ja="多くの問題が確認されており、緊急の対応が必要です。" data-pt="Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança." data-id="Banyak masalah teridentifikasi dan tindakan mendesak diperlukan.">Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança.</td>
                 </tr>
             </tbody>
         </table>
@@ -962,28 +962,28 @@
 
     <!-- SECÇÃO 6: PATRULHA -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">🚶 <span data-ja="巡回（パトロール）" data-pt="Patrulhas e seu impacto">Patrulhas e seu impacto</span></h3>
+        <h3 style="margin-top:0;color:#1a365d;">🚶 <span data-ja="巡回（パトロール）" data-pt="Patrulhas e seu impacto" data-id="Patroli">Patrulhas e seu impacto</span></h3>
         <div class="patrol-note">
-            <strong>🔒 <span data-ja="安全" data-pt="Segurança">Segurança</span> &amp; ✅ <span data-ja="品質" data-pt="Qualidade">Qualidade</span></strong><br>
-            <span data-ja="巡回中に記録された安全・品質の違反や優良事例は、それぞれのトピックに自動的に記録されます。つまり巡回での記録も評価に影響します。" data-pt="Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma.">Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma.</span>
+            <strong>🔒 <span data-ja="安全" data-pt="Segurança" data-id="Keselamatan">Segurança</span> &amp; ✅ <span data-ja="品質" data-pt="Qualidade" data-id="Kualitas">Qualidade</span></strong><br>
+            <span data-ja="巡回中に記録された安全・品質の違反や優良事例は、それぞれのトピックに自動的に記録されます。つまり巡回での記録も評価に影響します。" data-pt="Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma." data-id="Pelanggaran keselamatan dan kualitas atau praktik terbaik yang dicatat selama patroli secara otomatis dicatat untuk setiap topik. Dengan kata lain, catatan patroli juga mempengaruhi penilaian.">Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma.</span>
         </div>
     </div>
 
     <!-- SECÇÃO 7: GRÁFICO RADAR -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">📡 <span data-ja="レーダーチャート" data-pt="Gráfico Radar">Gráfico Radar</span></h3>
+        <h3 style="margin-top:0;color:#1a365d;">📡 <span data-ja="レーダーチャート" data-pt="Gráfico Radar" data-id="Grafik Radar">Gráfico Radar</span></h3>
         <div class="info-note">
-            <strong>📊 <span data-ja="何を示しているのか？" data-pt="O que ele mostra?">O que ele mostra?</span></strong>
-            <span data-ja="レーダーチャートは6つのトピックを視覚的に表示します。スコアが低い順に時計回りに並べられます。中央の線（5.0）は基準線で、それより広い面積は良い評価を示します。" data-pt="O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral.">O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral.</span>
+            <strong>📊 <span data-ja="何を示しているのか？" data-pt="O que ele mostra?" data-id="Apa itu?">O que ele mostra?</span></strong>
+            <span data-ja="レーダーチャートは6つのトピックを視覚的に表示します。スコアが低い順に時計回りに並べられます。中央の線（5.0）は基準線で、それより広い面積は良い評価を示します。" data-pt="O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral." data-id="Grafik radar menampilkan 6 topik secara visual. Diurutkan searah jarum jam dari skor terendah. Garis tengah (5.0) adalah garis referensi; area yang lebih luas menunjukkan penilaian yang lebih baik.">O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral.</span>
         </div>
     </div>
 
     <!-- SECÇÃO 8: AVALIAÇÃO DO LÍDER -->
     <div class="card">
-        <h3 style="margin-top:0;color:#1a365d;">👑 <span data-ja="リーダーによる評価" data-pt="Avaliação do Líder">Avaliação do Líder</span></h3>
+        <h3 style="margin-top:0;color:#1a365d;">👑 <span data-ja="リーダーによる評価" data-pt="Avaliação do Líder" data-id="Penilaian Pemimpin">Avaliação do Líder</span></h3>
         <div class="lider-note">
-            <strong>💬 <span data-ja="定性評価（点数に影響しない）" data-pt="Avaliação qualitativa — não entra na nota">Avaliação qualitativa — não entra na nota</span></strong><br>
-            <span data-ja="リーダーはリーダーシップ、コミュニケーション、主体性、問題解決などの観点から定性的なフィードバックを記録できます。このフィードバックは点数には影響しませんが、個人評価ページに表示され、数字だけでは伝わらない人間的な側面を補完します。" data-pt="Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir.">Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir.</span>
+            <strong>💬 <span data-ja="定性評価（点数に影響しない）" data-pt="Avaliação qualitativa — não entra na nota" data-id="Penilaian Kualitatif (tidak mempengaruhi skor)">Avaliação qualitativa — não entra na nota</span></strong><br>
+            <span data-ja="リーダーはリーダーシップ、コミュニケーション、主体性、問題解決などの観点から定性的なフィードバックを記録できます。このフィードバックは点数には影響しませんが、個人評価ページに表示され、数字だけでは伝わらない人間的な側面を補完します。" data-pt="Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir." data-id="Pemimpin dapat merekam umpan balik kualitatif dari perspektif kepemimpinan, komunikasi, inisiatif, dan pemecahan masalah. Umpan balik ini tidak mempengaruhi skor tetapi ditampilkan di halaman penilaian individual untuk melengkapi aspek manusia yang tidak tersampaikan dalam angka.">Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir.</span>
         </div>
     </div>
 
@@ -994,41 +994,41 @@
 ════════════════════════════════════════════════════ -->
 <div id="tab-config" class="tab-content">
     <div class="card">
-        <h2>⚙️ <span data-ja="社員管理" data-pt="Gerenciar Funcionários">社員管理</span></h2>
+        <h2>⚙️ <span data-ja="社員管理" data-pt="Gerenciar Funcionários" data-id="Manajemen Karyawan">社員管理</span></h2>
         <button class="btn-primary" onclick="toggleAddEmpForm()">
-            ＋ <span data-ja="社員を追加" data-pt="Adicionar Funcionário">社員を追加</span>
+            ＋ <span data-ja="社員を追加" data-pt="Adicionar Funcionário" data-id="Tambah Karyawan">社員を追加</span>
         </button>
         <div id="addEmpForm" class="inline-form hidden">
             <div class="grid-3">
                 <div class="form-group">
-                    <label data-ja="番号（バン）" data-pt="Nº Crachá">番号</label>
+                    <label data-ja="番号（バン）" data-pt="Nº Crachá" data-id="Nomor (Ban)">番号</label>
                     <input type="text" id="newBan" placeholder="H240001">
                 </div>
                 <div class="form-group">
-                    <label data-ja="日本語名" data-pt="Nome (JP)">日本語名</label>
+                    <label data-ja="日本語名" data-pt="Nome (JP)" data-id="Nama Jepang">日本語名</label>
                     <input type="text" id="newJp" placeholder="ヤマダ タロウ">
                 </div>
                 <div class="form-group">
-                    <label data-ja="ポルトガル語名" data-pt="Nome (PT)">Nome PT</label>
+                    <label data-ja="ポルトガル語名" data-pt="Nome (PT)" data-id="Nama Portugis">Nome PT</label>
                     <input type="text" id="newPt" placeholder="João Silva">
                 </div>
             </div>
             <div class="grid-2">
                 <div class="form-group">
-                    <label data-ja="所属" data-pt="Setor">所属</label>
+                    <label data-ja="所属" data-pt="Setor" data-id="Departemen">所属</label>
                     <input type="text" id="newSetor" data-ja-ph="例: Aゾーン" data-pt-ph="Ex: Armazém" placeholder="Ex: Armazém">
                 </div>
                 <div class="form-group">
-                    <label data-ja="役職" data-pt="Cargo">役職</label>
+                    <label data-ja="役職" data-pt="Cargo" data-id="Jabatan">役職</label>
                     <select id="newCargo">
-                        <option value="operador" data-ja="👤 オペレーター" data-pt="👤 Operador">👤 オペレーター</option>
-                        <option value="lider"    data-ja="👑 リーダー"    data-pt="👑 Líder"    >👑 リーダー</option>
+                        <option value="operador" data-ja="👤 オペレーター" data-pt="👤 Operador" data-id="👤 Operator">👤 オペレーター</option>
+                        <option value="lider"    data-ja="👑 リーダー"    data-pt="👑 Líder" data-id="👑 Pemimpin"    >👑 リーダー</option>
                     </select>
                 </div>
             </div>
             <div class="btn-group">
-                <button class="btn-primary" onclick="addEmployee()"><span data-ja="追加する" data-pt="Adicionar">追加する</span></button>
-                <button class="btn-secondary" onclick="toggleAddEmpForm()"><span data-ja="キャンセル" data-pt="Cancelar">キャンセル</span></button>
+                <button class="btn-primary" onclick="addEmployee()"><span data-ja="追加する" data-pt="Adicionar" data-id="Tambah">追加する</span></button>
+                <button class="btn-secondary" onclick="toggleAddEmpForm()"><span data-ja="キャンセル" data-pt="Cancelar" data-id="Batal">キャンセル</span></button>
             </div>
         </div>
         <div id="empList" style="margin-top:18px;"></div>
@@ -1036,12 +1036,12 @@
 
     <!-- ── Fiscal Year Management ── -->
     <div class="card">
-        <h2>📅 <span data-ja="年度管理" data-pt="Gerenciar Anos Fiscais">年度管理</span></h2>
+        <h2>📅 <span data-ja="年度管理" data-pt="Gerenciar Anos Fiscais" data-id="Manajemen Tahun Fiskal">年度管理</span></h2>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
             <input type="number" id="new-ano-input" min="1" max="9999" data-ja-ph="例: 27 または 2027" data-pt-ph="Ex: 27 ou 2027" placeholder="Ex: 27 ou 2027"
                 style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;width:160px;">
             <button class="btn-primary" onclick="addAnoFiscal()">
-                ＋ <span data-ja="年度を追加" data-pt="Adicionar Ano">年度を追加</span>
+                ＋ <span data-ja="年度を追加" data-pt="Adicionar Ano" data-id="Tambah Tahun Fiskal">年度を追加</span>
             </button>
         </div>
         <div id="anos-list"></div>
@@ -1049,22 +1049,22 @@
 
     <!-- ── Logo da Empresa ── -->
     <div class="card">
-        <h2>🏢 <span data-ja="会社ロゴ" data-pt="Logo da Empresa">Logo da Empresa</span></h2>
+        <h2>🏢 <span data-ja="会社ロゴ" data-pt="Logo da Empresa" data-id="Logo Perusahaan">Logo da Empresa</span></h2>
         <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
-            <span data-ja="PDFに表示されるロゴを設定します（PNG・JPG・GIF対応）" data-pt="Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)">Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)</span>
+            <span data-ja="PDFに表示されるロゴを設定します（PNG・JPG・GIF対応）" data-pt="Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)" data-id="Atur logo yang ditampilkan di PDF (PNG, JPG, GIF didukung)">Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)</span>
         </p>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
             <div id="logo-preview-box" style="width:120px;height:60px;border:2px dashed #cbd5e1;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f8fafc;overflow:hidden;">
                 <img id="logo-preview-img" src="" alt="" style="max-width:116px;max-height:56px;object-fit:contain;display:none;">
-                <span id="logo-preview-empty" data-ja="ロゴなし" data-pt="Sem logo" style="font-size:11px;color:#94a3b8;">Sem logo</span>
+                <span id="logo-preview-empty" data-ja="ロゴなし" data-pt="Sem logo" data-id="Tanpa Logo" style="font-size:11px;color:#94a3b8;">Sem logo</span>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px;">
                 <input type="file" id="logo-upload-input" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
                 <button class="btn-primary btn-sm" onclick="document.getElementById('logo-upload-input').click()">
-                    📁 <span data-ja="ロゴをアップロード" data-pt="Enviar Logo">Enviar Logo</span>
+                    📁 <span data-ja="ロゴをアップロード" data-pt="Enviar Logo" data-id="Upload Logo">Enviar Logo</span>
                 </button>
                 <button class="btn-secondary btn-sm" onclick="removeLogo()" id="logo-remove-btn" style="display:none;">
-                    🗑️ <span data-ja="ロゴを削除" data-pt="Remover Logo">Remover Logo</span>
+                    🗑️ <span data-ja="ロゴを削除" data-pt="Remover Logo" data-id="Hapus Logo">Remover Logo</span>
                 </button>
             </div>
         </div>
@@ -1072,15 +1072,15 @@
 
     <!-- ── Responsáveis ── -->
     <div class="card">
-        <h2>🧑‍💼 <span data-ja="担当者管理" data-pt="Gerenciar Responsáveis">Gerenciar Responsáveis</span></h2>
+        <h2>🧑‍💼 <span data-ja="担当者管理" data-pt="Gerenciar Responsáveis" data-id="Manajemen Penanggung Jawab">Gerenciar Responsáveis</span></h2>
         <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
-            <span data-ja="新規登録・巡回時に選択できる担当者リストです" data-pt="Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha">Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha</span>
+            <span data-ja="新規登録・巡回時に選択できる担当者リストです" data-pt="Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha" data-id="Ini adalah daftar penanggung jawab yang dapat dipilih saat mendaftar atau patroli.">Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha</span>
         </p>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
             <input type="text" id="new-resp-input" data-ja-ph="担当者名を入力" data-pt-ph="Nome do responsável" placeholder="Nome do responsável" maxlength="60"
                 style="flex:1;min-width:180px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;">
             <button class="btn-primary" onclick="addResponsavel()">
-                ＋ <span data-ja="追加" data-pt="Adicionar">Adicionar</span>
+                ＋ <span data-ja="追加" data-pt="Adicionar" data-id="Tambah">Adicionar</span>
             </button>
         </div>
         <div id="resp-list"></div>
@@ -1099,13 +1099,20 @@ let radarChart2 = null;
 
 // ─── Topic metadata ──────────────────────────────────────────────────────────
 const TOPICS = {
-    seguranca:     { ja:'安全',   pt:'Segurança',     icon:'🔒', color:'#ef4444' },
-    qualidade:     { ja:'品質',   pt:'Qualidade',     icon:'✅', color:'#10b981' },
-    cooperacao:    { ja:'協力',   pt:'Cooperação',    icon:'🤝', color:'#3b82f6' },
-    moral:         { ja:'モラル', pt:'Moral',         icon:'💡', color:'#f59e0b' },
-    produtividade: { ja:'生産性', pt:'Produtividade', icon:'📈', color:'#8b5cf6' },
-    presenca:      { ja:'出勤',   pt:'Presença',      icon:'📅', color:'#06b6d4' },
+    seguranca:     { ja:'安全',   pt:'Segurança',     id:'Keselamatan',  icon:'🔒', color:'#ef4444' },
+    qualidade:     { ja:'品質',   pt:'Qualidade',     id:'Kualitas',     icon:'✅', color:'#10b981' },
+    cooperacao:    { ja:'協力',   pt:'Cooperação',    id:'Kerjasama',    icon:'🤝', color:'#3b82f6' },
+    moral:         { ja:'モラル', pt:'Moral',         id:'Moral',        icon:'💡', color:'#f59e0b' },
+    produtividade: { ja:'生産性', pt:'Produtividade', id:'Produktivitas', icon:'📈', color:'#8b5cf6' },
+    presenca:      { ja:'出勤',   pt:'Presença',      id:'Kehadiran',    icon:'📅', color:'#06b6d4' },
 };
+
+// ─── Helper translation function ────────────────────────────────────────────────
+function t(ja, pt, id) {
+    if (currentLang === 'ja') return ja;
+    if (currentLang === 'id') return id !== undefined ? id : pt;
+    return pt;
+}
 
 // Maps topic -> { year select id, emp filter select id }
 const TOPIC_FILTERS = {
@@ -1209,12 +1216,18 @@ const LIDER_TOPICOS = [
 
 // ─── Language ────────────────────────────────────────────────────────────────
 function toggleLanguage() {
-    currentLang = currentLang === 'ja' ? 'pt' : 'ja';
+    if (currentLang === 'ja') {
+        currentLang = 'pt';
+    } else if (currentLang === 'pt') {
+        currentLang = 'id';
+    } else {
+        currentLang = 'ja';
+    }
     localStorage.setItem('lang26', currentLang);
     applyLanguage();
     populateAllEmpSelects();
-    populateYearSelects();   // re-label year options (年度 ↔ Ano)
-    initDatePickers();       // re-label novoYear (年 ↔ plain number)
+    populateYearSelects();   // re-label year options (年度 ↔ Ano ↔ Tahun)
+    initDatePickers();       // re-label novoYear (年 ↔ plain number ↔ Tahun)
     populateRespSelects();
     showTopicFields();
     Object.keys(TOPICS).forEach(t => renderTopicList(t));
@@ -1227,16 +1240,44 @@ function toggleLanguage() {
 }
 
 function applyLanguage() {
-    const ja = currentLang === 'ja';
     document.querySelectorAll('[data-ja]').forEach(el => {
         if (!el.children.length) {
-            el.textContent = ja ? el.getAttribute('data-ja') : el.getAttribute('data-pt');
+            let text;
+            if (currentLang === 'ja') {
+                text = el.getAttribute('data-ja');
+            } else if (currentLang === 'id') {
+                text = el.getAttribute('data-id') || el.getAttribute('data-pt');
+            } else {
+                text = el.getAttribute('data-pt');
+            }
+            el.textContent = text;
         }
     });
     // Handle placeholder translations
     document.querySelectorAll('[data-ja-ph]').forEach(el => {
-        el.placeholder = ja ? el.getAttribute('data-ja-ph') : el.getAttribute('data-pt-ph');
+        let text;
+        if (currentLang === 'ja') {
+            text = el.getAttribute('data-ja-ph');
+        } else if (currentLang === 'id') {
+            text = el.getAttribute('data-id-ph') || el.getAttribute('data-pt-ph');
+        } else {
+            text = el.getAttribute('data-pt-ph');
+        }
+        el.placeholder = text;
     });
+    // Update language toggle button to show next language
+    const langBtn = document.getElementById('lang-toggle-btn');
+    if (langBtn) {
+        let nextLabel;
+        if (currentLang === 'ja') {
+            nextLabel = '🇧🇷 PT';
+        } else if (currentLang === 'pt') {
+            nextLabel = '🇮🇩 ID';
+        } else {
+            nextLabel = '🇯🇵 JA';
+        }
+        langBtn.textContent = nextLabel;
+    }
 }
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
@@ -1281,26 +1322,26 @@ function showTopicFields() {
         <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
                 <input type="checkbox" id="tf-no-score" onchange="toggleNoScore()">
-                📋 ${ja?'採点なし（記録のみ）':'Sem pontuação (apenas registro)'}
+                📋 ${t('採点なし（記録のみ）','Sem pontuação (apenas registro)','Tanpa Nilai (hanya catatan)')}
             </label>
         </div>`;
 
     const templates = {
         seguranca: () => `
-            <div class="topic-field-label">🔒 ${ja?'安全 — 詳細':'Segurança — Detalhes'}</div>
+            <div class="topic-field-label">🔒 ${t('安全 — 詳細','Segurança — Detalhes','Keselamatan — Detail')}</div>
             ${noScoreBlock}
             <div class="form-group">
-                <label>${ja?'評価':'Resultado'}</label>
+                <label>${t('評価','Resultado','Hasil')}</label>
                 <select id="tf-result" onchange="toggleNegativeFields()">
-                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
-                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
-                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                    <option value="positivo">✅ ${t('ポジティブ','Positivo','Positif')}</option>
+                    <option value="atencao">⚠️ ${t('注意','Atenção','Perhatian')}</option>
+                    <option value="negativo">❌ ${t('ネガティブ','Negativo','Negatif')}</option>
                 </select>
             </div>
 
             <div id="tf-positive-comment">
                 <div class="form-group">
-                    <label>${ja?'コメント':'Comentário'}</label>
+                    <label>${t('コメント','Comentário','Komentar')}</label>
                     <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o ponto positivo'}"></textarea>
                 </div>
             </div>
@@ -1324,20 +1365,20 @@ function showTopicFields() {
             </div>`,
 
         qualidade: () => `
-            <div class="topic-field-label">✅ ${ja?'品質 — 詳細':'Qualidade — Detalhes'}</div>
+            <div class="topic-field-label">✅ ${t('品質 — 詳細','Qualidade — Detalhes','Kualitas — Detail')}</div>
             ${noScoreBlock}
             <div class="form-group">
-                <label>${ja?'評価':'Resultado'}</label>
+                <label>${t('評価','Resultado','Hasil')}</label>
                 <select id="tf-result" onchange="toggleNegativeFields()">
-                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
-                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
-                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                    <option value="positivo">✅ ${t('ポジティブ','Positivo','Positif')}</option>
+                    <option value="atencao">⚠️ ${t('注意','Atenção','Perhatian')}</option>
+                    <option value="negativo">❌ ${t('ネガティブ','Negativo','Negatif')}</option>
                 </select>
             </div>
 
             <div id="tf-positive-comment">
                 <div class="form-group">
-                    <label>${ja?'コメント':'Comentário'}</label>
+                    <label>${t('コメント','Comentário','Komentar')}</label>
                     <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o ponto positivo'}"></textarea>
                 </div>
             </div>
@@ -1361,19 +1402,19 @@ function showTopicFields() {
             </div>`,
 
         cooperacao: () => `
-            <div class="topic-field-label">🤝 ${ja?'協力 — 詳細':'Cooperação — Detalhes'}</div>
+            <div class="topic-field-label">🤝 ${t('協力 — 詳細','Cooperação — Detalhes','Kerjasama — Detail')}</div>
             ${noScoreBlock}
             <div class="form-group">
                 <label>${ja?'評価':'Avaliação'}</label>
                 <select id="tf-result" onchange="toggleNegativeFields()">
-                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
-                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
-                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                    <option value="positivo">✅ ${t('ポジティブ','Positivo','Positif')}</option>
+                    <option value="atencao">⚠️ ${t('注意','Atenção','Perhatian')}</option>
+                    <option value="negativo">❌ ${t('ネガティブ','Negativo','Negatif')}</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>${ja?'コメント':'Comentário'}</label>
+                <label>${t('コメント','Comentário','Komentar')}</label>
                 <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o comportamento observado'}"></textarea>
             </div>
             <div class="form-group">
@@ -1382,19 +1423,19 @@ function showTopicFields() {
             </div>`,
 
         moral: () => `
-            <div class="topic-field-label">💡 ${ja?'モラル — 詳細':'Moral — Detalhes'}</div>
+            <div class="topic-field-label">💡 ${t('モラル — 詳細','Moral — Detalhes','Moral — Detail')}</div>
             ${noScoreBlock}
             <div class="form-group">
                 <label>${ja?'評価':'Avaliação'}</label>
                 <select id="tf-result" onchange="toggleNegativeFields()">
-                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
-                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
-                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                    <option value="positivo">✅ ${t('ポジティブ','Positivo','Positif')}</option>
+                    <option value="atencao">⚠️ ${t('注意','Atenção','Perhatian')}</option>
+                    <option value="negativo">❌ ${t('ネガティブ','Negativo','Negatif')}</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label>${ja?'コメント':'Comentário'}</label>
+                <label>${t('コメント','Comentário','Komentar')}</label>
                 <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o comportamento observado'}"></textarea>
             </div>
             <div class="form-group">
@@ -1403,7 +1444,7 @@ function showTopicFields() {
             </div>`,
 
         produtividade: () => `
-            <div class="topic-field-label">📈 ${ja?'生産性 — 詳細':'Produtividade — Detalhes'}</div>
+            <div class="topic-field-label">📈 ${t('生産性 — 詳細','Produtividade — Detalhes','Produktivitas — Detail')}</div>
             ${noScoreBlock}
             <div class="grid-2">
                 <div class="form-group">
@@ -1429,7 +1470,7 @@ function showTopicFields() {
             </div>
 
             <div class="form-group">
-                <label>${ja?'コメント':'Comentário'}</label>
+                <label>${t('コメント','Comentário','Komentar')}</label>
                 <textarea id="tf-comentario" placeholder="${ja?'コメントを追加':'Adicione um comentário'}"></textarea>
             </div>
             <div class="form-group">
@@ -1438,14 +1479,14 @@ function showTopicFields() {
             </div>`,
 
         presenca: () => `
-            <div class="topic-field-label">📅 ${ja?'出勤 — 詳細':'Presença — Detalhes'}</div>
+            <div class="topic-field-label">📅 ${t('出勤 — 詳細','Presença — Detalhes','Kehadiran — Detail')}</div>
             ${noScoreBlock}
             <div class="form-group">
                 <label>${ja?'評価':'Avaliação'}</label>
                 <select id="tf-result" onchange="toggleNegativeFields()">
-                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
-                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
-                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                    <option value="positivo">✅ ${t('ポジティブ','Positivo','Positif')}</option>
+                    <option value="atencao">⚠️ ${t('注意','Atenção','Perhatian')}</option>
+                    <option value="negativo">❌ ${t('ネガティブ','Negativo','Negatif')}</option>
                 </select>
             </div>
 
@@ -1461,7 +1502,7 @@ function showTopicFields() {
                 </select>
             </div>
             <div class="form-group">
-                <label>${ja?'コメント':'Comentário'}</label>
+                <label>${t('コメント','Comentário','Komentar')}</label>
                 <textarea id="tf-comentario" placeholder="${ja?'コメントを追加':'Adicione um comentário'}"></textarea>
             </div>
             <div class="form-group">
@@ -1592,7 +1633,7 @@ function updateProdFields() {
                 labelEl.textContent = `➡️ ${ja ? '目標付近 — 注意' : 'Próximo da meta — Atenção'}`;
                 labelEl.style.color = '#888';
             } else {
-                labelEl.textContent = `⚠️ ${ja ? '目標大幅未達 — 注意' : 'Abaixo da meta (-5) — Atenção'}`;
+                labelEl.textContent = `⚠️ ${ja ? '目標大幅未達 — 注意' : 'Abaixo da meta — Atenção'}`;
                 labelEl.style.color = '#d97706';
             }
         }
@@ -1862,10 +1903,10 @@ function buildRecordCard(r) {
 
     let detailHtml = '';
 
-    const noScoreBadge  = `<span class="badge b-neutral">📋 ${ja?'採点なし':'Sem Pontuação'}</span>`;
-    const posBadge      = `<span class="badge b-pos">✅ ${ja?'ポジティブ':'Positivo'}</span>`;
-    const negBadge      = `<span class="badge b-neg">❌ ${ja?'ネガティブ':'Negativo'}</span>`;
-    const atencaoBadge  = `<span class="badge b-warn">⚠️ ${ja?'注意':'Atenção'}</span>`;
+    const noScoreBadge  = `<span class="badge b-neutral">📋 ${t('採点なし','Sem Pontuação','Tanpa Nilai')}</span>`;
+    const posBadge      = `<span class="badge b-pos">✅ ${t('ポジティブ','Positivo','Positif')}</span>`;
+    const negBadge      = `<span class="badge b-neg">❌ ${t('ネガティブ','Negativo','Negatif')}</span>`;
+    const atencaoBadge  = `<span class="badge b-warn">⚠️ ${t('注意','Atenção','Perhatian')}</span>`;
     function resultBadgeFor(dados) {
         if (dados.noScore)              return noScoreBadge;
         if (dados.result === 'negativo') return negBadge;
@@ -1881,20 +1922,20 @@ function buildRecordCard(r) {
                 ${d.motivo         ? `<div class="record-field"><strong>${ja?'原因':'Motivo'}:</strong> ${esc(d.motivo)}</div>` : ''}
                 ${d.comentarioFunc ? `<div class="record-field"><strong>${ja?'従業員コメント':'Coment. Funcionário'}:</strong> ${esc(d.comentarioFunc)}</div>` : ''}
             ` : `
-                ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}
+                ${d.comentario ? `<div class="record-field"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${esc(d.comentario)}</div>` : ''}
             `}`;
 
     } else if (r.topic === 'cooperacao' || r.topic === 'moral') {
         detailHtml = `
             <div class="record-field">${resultBadgeFor(d)}</div>
-            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+            ${d.comentario ? `<div class="record-field"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${esc(d.comentario)}</div>` : ''}`;
 
     } else if (r.topic === 'produtividade') {
         const perfLabels = {
             acima:   { label: ja?'🚀 目標大幅超過':'🚀 Acima da meta (+10)',  cls:'b-perf-up'  },
             media:   { label: ja?'➡️ 目標付近':'➡️ Na faixa da meta',        cls:'b-perf-mid' },
-            proximo: { label: ja?'➡️ 目標近く':'➡️ Próximo da meta (-5)',    cls:'b-perf-mid' },
-            abaixo:  { label: ja?'⚠️ 目標大幅未達':'⚠️ Abaixo da meta (-5)', cls:'b-perf-dn'  },
+            proximo: { label: ja?'➡️ 目標近く':'➡️ Próximo da meta',    cls:'b-perf-mid' },
+            abaixo:  { label: ja?'⚠️ 目標大幅未達':'⚠️ Abaixo da meta', cls:'b-perf-dn'  },
         };
         const perf = perfLabels[d.performance] || perfLabels['media'];
         const svcLabel = { picking: ja?'ピッキング作業':'Picking', furidashi: ja?'振り出し作業':'Furidashi', kenzai: ja?'建材バーコード検品':'Kenzai BarCode', rappa: ja?'ラップ巻き':'Rappu Maki', inpurasu: ja?'インプラス仕分':'Separacao de Vidros', ax02: ja?'AX02ながら検品':'AX02 Nagara Kenpin', geral: ja?'全般':'Geral' };
@@ -1905,7 +1946,7 @@ function buildRecordCard(r) {
                 ${d.media ? `&nbsp;<span style="font-weight:700;color:#8b5cf6;">${d.media}</span>` : ''}
                 ${d.noScore ? `&nbsp;${noScoreBadge}` : ''}
             </div>
-            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+            ${d.comentario ? `<div class="record-field"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${esc(d.comentario)}</div>` : ''}`;
 
     } else if (r.topic === 'presenca') {
         const tipoMap = {
@@ -1920,7 +1961,7 @@ function buildRecordCard(r) {
                 ${resultBadgeFor(d)}
                 ${d.tipo ? `&nbsp;<span class="badge b-neutral">${tipoMap[d.tipo]||d.tipo}</span>` : ''}
             </div>
-            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+            ${d.comentario ? `<div class="record-field"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${esc(d.comentario)}</div>` : ''}`;
     }
 
     let attachHtml = '';
@@ -1969,7 +2010,7 @@ function printSegQualRecord(id) {
         ${d.motivo   ? `<div class="row"><span class="lbl">${ja?'原因':'Motivo'}:</span><span class="val">${d.motivo.replace(/\n/g,'<br>')}</span></div>` : ''}
         ${d.comentarioFunc ? `<div class="row"><span class="lbl">${ja?'従業員コメント':'Coment. Funcionário'}:</span><span class="val">${d.comentarioFunc.replace(/\n/g,'<br>')}</span></div>` : ''}
     ` : `
-        ${d.comentario ? `<div class="row"><span class="lbl">${ja?'コメント':'Comentário'}:</span><span class="val">${d.comentario.replace(/\n/g,'<br>')}</span></div>` : ''}
+        ${d.comentario ? `<div class="row"><span class="lbl">${t('コメント','Comentário','Komentar')}:</span><span class="val">${d.comentario.replace(/\n/g,'<br>')}</span></div>` : ''}
     `;
 
     const attachHtml = r.anexo && r.anexoType === 'image'
@@ -2700,11 +2741,11 @@ function buildPatrolCard(r, ja) {
     const borderColor = isSeg ? '#ef4444' : '#10b981';
 
     const resultMap = {
-        positivo: `<span class="badge b-pos">✅ ${ja?'ポジティブ':'Positivo'}</span>`,
-        atencao:  `<span class="badge b-warn">⚠️ ${ja?'注意':'Atenção'}</span>`,
-        negativo: `<span class="badge b-neg">❌ ${ja?'ネガティブ':'Negativo'}</span>`,
+        positivo: `<span class="badge b-pos">✅ ${t('ポジティブ','Positivo','Positif')}</span>`,
+        atencao:  `<span class="badge b-warn">⚠️ ${t('注意','Atenção','Perhatian')}</span>`,
+        negativo: `<span class="badge b-neg">❌ ${t('ネガティブ','Negativo','Negatif')}</span>`,
     };
-    const noScoreBadge = `<span class="badge b-neutral">📋 ${ja?'採点なし':'Sem Pontuação'}</span>`;
+    const noScoreBadge = `<span class="badge b-neutral">📋 ${t('採点なし','Sem Pontuação','Tanpa Nilai')}</span>`;
 
     return `<div class="record-item" style="border-left:5px solid ${borderColor};" id="patrol-card-${r.id}">
         <div class="record-top">
@@ -2723,7 +2764,7 @@ function buildPatrolCard(r, ja) {
             <div class="record-field">
                 ${r.noScore ? noScoreBadge : (resultMap[r.result]||r.result)}
             </div>
-            ${r.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(r.comentario)}</div>` : ''}
+            ${r.comentario ? `<div class="record-field"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${esc(r.comentario)}</div>` : ''}
         </div>
     </div>`;
 }
@@ -2779,7 +2820,7 @@ function downloadPatrolPDF(id) {
         <div style="border-left:4px solid ${borderColor};padding:10px 16px;border-radius:6px;background:#fafafa;margin-bottom:12px;">
             <div style="font-weight:700;font-size:14px;color:#1a365d;margin-bottom:6px;">${topicLabel}</div>
             <div style="font-weight:700;color:${resultColor(rec)};font-size:13px;margin-bottom:6px;">${resultLabel(rec)}</div>
-            ${rec.comentario ? `<div style="font-size:13px;color:#444;"><strong>${ja?'コメント':'Comentário'}:</strong> ${rec.comentario.replace(/\n/g,'<br>')}</div>` : ''}
+            ${rec.comentario ? `<div style="font-size:13px;color:#444;"><strong>${t('コメント','Comentário','Komentar')}:</strong> ${rec.comentario.replace(/\n/g,'<br>')}</div>` : ''}
         </div>`;
     };
 
