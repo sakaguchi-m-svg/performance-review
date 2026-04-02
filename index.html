@@ -1,0 +1,3555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社員評価システム</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; padding: 20px; color: #333; }
+
+        header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 18px 24px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+        .lang-btn { background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.6); padding: 7px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; color: white; transition: all 0.2s; }
+        .lang-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 16px; background: white; border: none; cursor: pointer; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; transition: all 0.2s; color: #666; white-space: nowrap; border-bottom: 2px solid transparent; }
+        .tab-btn:hover { background: #eef2f7; color: #1a365d; }
+        .tab-btn.active { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; border-bottom-color: transparent; }
+
+        .tab-content { display: none; animation: fadeIn 0.25s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .card h2 { font-size: 18px; margin-bottom: 16px; color: #1a365d; display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; font-size: 13px; }
+        input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="file"], select, textarea {
+            width: 100%; padding: 9px 12px; border: 1.5px solid #dde1e7; border-radius: 7px; font-size: 14px;
+            font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; background: #fafbfd;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #2b6cb0; box-shadow: 0 0 0 3px rgba(43,108,176,0.12); background: white; }
+        textarea { resize: vertical; min-height: 72px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        @media (max-width: 700px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            header { flex-direction: column; gap: 10px; }
+            .tabs { gap: 3px; }
+            .tab-btn { font-size: 12px; padding: 8px 10px; }
+            .summary-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+
+        button { padding: 9px 18px; border: none; border-radius: 7px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(43,108,176,0.35); }
+        .btn-danger  { background: #ef4444; color: white; }
+        .btn-danger:hover  { background: #dc2626; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #4b5563; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+        .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; padding: 14px 16px; background: #f4f7fb; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .filter-bar .form-group { margin: 0; flex: 1; min-width: 140px; }
+
+        /* ─── Topic header banners ─── */
+        .topic-banner { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 9px; margin-bottom: 16px; color: white; }
+        .topic-banner h2 { color: white; margin: 0; font-size: 20px; }
+        .topic-banner .t-icon { font-size: 28px; }
+        .banner-seguranca     { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .banner-qualidade     { background: linear-gradient(135deg, #10b981, #047857); }
+        .banner-cooperacao    { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .banner-moral         { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .banner-produtividade { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .banner-presenca      { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+
+        /* ─── Record cards ─── */
+        .record-item { border: 1px solid #e8ecf0; border-left: 5px solid #ccc; border-radius: 8px; padding: 14px; margin-bottom: 10px; background: #fafcff; transition: box-shadow 0.2s; }
+        .record-item:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+        .record-item.t-seguranca     { border-left-color: #ef4444; }
+        .record-item.t-qualidade     { border-left-color: #10b981; }
+        .record-item.t-cooperacao    { border-left-color: #3b82f6; }
+        .record-item.t-moral         { border-left-color: #f59e0b; }
+        .record-item.t-produtividade { border-left-color: #8b5cf6; }
+        .record-item.t-presenca      { border-left-color: #06b6d4; }
+
+        .record-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .record-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .r-date { font-weight: 700; color: #1a365d; font-size: 14px; }
+        .r-emp  { font-size: 13px; color: #555; }
+        .r-ban  { font-size: 11px; color: #aaa; }
+        .record-body { font-size: 13px; color: #555; line-height: 1.6; }
+        .record-field { margin-bottom: 5px; }
+        .record-field strong { color: #333; margin-right: 5px; }
+
+        /* ─── Badges ─── */
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .b-good    { background: #d1fae5; color: #065f46; }
+        .b-warn    { background: #fef3c7; color: #92400e; }
+        .b-bad     { background: #fee2e2; color: #7f1d1d; }
+        .b-pos     { background: #dbeafe; color: #1e3a8a; }
+        .b-neg     { background: #fce7f3; color: #831843; }
+        .b-neutral { background: #f1f5f9; color: #475569; }
+        .b-extra   { background: #ede9fe; color: #5b21b6; }
+
+        /* ─── Summary boxes in Avaliação ─── */
+        .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .s-box { padding: 16px; border-radius: 10px; color: white; text-align: center; }
+        .s-box .s-icon  { font-size: 26px; margin-bottom: 4px; }
+        .s-box .s-name  { font-size: 12px; opacity: 0.9; margin-bottom: 6px; }
+        .s-box .s-count { font-size: 30px; font-weight: 700; line-height: 1; }
+        .s-box .s-detail{ font-size: 11px; opacity: 0.85; margin-top: 6px; min-height: 16px; }
+        .sb-seguranca     { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .sb-qualidade     { background: linear-gradient(135deg, #10b981, #047857); }
+        .sb-cooperacao    { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .sb-moral         { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        .sb-produtividade { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .sb-presenca      { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+
+        /* ─── Topic fields area ─── */
+        #topicFields { padding-top: 14px; margin-top: 4px; border-top: 1px solid #e8ecf0; }
+        .topic-field-label { font-size: 13px; font-weight: 700; color: #1a365d; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+        /* ─── Employee list in settings ─── */
+        .emp-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; border: 1px solid #e8ecf0; border-radius: 7px; margin-bottom: 8px; background: #fafcff; }
+        .emp-row-main { font-weight: 600; font-size: 14px; }
+        .emp-row-sub  { font-size: 12px; color: #888; margin-top: 2px; }
+
+        .inline-form { padding: 16px; background: #f4f7fb; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 12px; }
+        .hidden { display: none !important; }
+
+        .empty-msg { text-align: center; color: #aab; padding: 32px 20px; font-size: 15px; }
+
+        /* ─── Produtividade service cards ─── */
+        .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+        @media (max-width: 700px) { .svc-grid { grid-template-columns: 1fr; } }
+        .svc-card { border-radius: 10px; padding: 18px; color: white; position: relative; overflow: hidden; }
+        .svc-card.picking     { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .svc-card.furidashi   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .svc-card.kenzai      { background: linear-gradient(135deg, #10b981, #047857); }
+        .svc-card.rappa       { background: linear-gradient(135deg, #f97316, #c2410c); }
+        .svc-card.inpurasu    { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+        .svc-card.ax02        { background: linear-gradient(135deg, #ec4899, #9d174d); }
+        .svc-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; opacity: 0.95; }
+        .svc-avg    { font-size: 34px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+        .svc-avg-lbl{ font-size: 11px; opacity: 0.8; margin-bottom: 12px; }
+        .svc-meta-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .svc-meta-row label { font-size: 12px; opacity: 0.9; font-weight: 600; white-space: nowrap; }
+        .svc-meta-input { width: 80px; padding: 5px 8px; border-radius: 5px; border: none; font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.25); color: white; text-align: center; }
+        .svc-meta-input::placeholder { color: rgba(255,255,255,0.5); }
+        .svc-meta-input:focus { outline: 2px solid rgba(255,255,255,0.7); background: rgba(255,255,255,0.35); }
+        .svc-save-btn { padding: 4px 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); color: white; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .svc-save-btn:hover { background: rgba(255,255,255,0.3); }
+        .svc-progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+        .svc-progress-fill { height: 100%; background: rgba(255,255,255,0.8); border-radius: 3px; transition: width 0.4s; }
+        .svc-pct { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+        .svc-count { position: absolute; top: 12px; right: 14px; font-size: 11px; opacity: 0.7; }
+
+        /* ─── Score hero card ─── */
+        .score-hero { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; border-radius: 10px; padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+        .score-hero .sh-left { display: flex; align-items: baseline; gap: 10px; }
+        .score-hero .sh-num  { font-size: 58px; font-weight: 800; line-height: 1; }
+        .score-hero .sh-den  { font-size: 22px; opacity: 0.7; }
+        .score-hero .sh-label{ font-size: 13px; opacity: 0.85; }
+        .score-hero .sh-ded  { font-size: 13px; opacity: 0.75; margin-top: 4px; }
+        .score-hero .sh-right{ text-align: right; }
+
+        /* ─── Deduction row inside record cards (Avaliação view) ─── */
+        .ded-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e0e6f0; flex-wrap: wrap; }
+        .ded-row label { font-size: 12px; color: #777; white-space: nowrap; font-weight: 600; }
+        .ded-input { width: 72px; padding: 5px 8px; border: 1.5px solid #c0c8d8; border-radius: 6px; font-size: 14px; font-weight: 700; text-align: center; color: #ef4444; }
+        .ded-input:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239,68,68,0.15); }
+        .ded-saved { font-size: 12px; color: #10b981; font-weight: 700; }
+
+        /* ─── Incident badges ─── */
+        .b-incident  { background: #fff0f0; color: #991b1b; border: 1px solid #fca5a5; }
+        .b-perf-up   { background: #ede9fe; color: #5b21b6; }
+        .b-perf-mid  { background: #d1fae5; color: #065f46; }
+        .b-perf-dn   { background: #fee2e2; color: #7f1d1d; }
+        .b-atencao   { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+        /* ─── Patrol tab ─── */
+        .banner-patrol { background: linear-gradient(135deg, #0891b2, #164e63); }
+        .record-item.t-patrol-seg { border-left-color: #0891b2; }
+        .record-item.t-patrol-qual { border-left-color: #0891b2; }
+        .patrol-seg-card  { border-left: 5px solid #ef4444 !important; }
+        .patrol-qual-card { border-left: 5px solid #10b981 !important; }
+
+        /* ─── Leader tab ─── */
+        .banner-lideres { background: linear-gradient(135deg, #d97706, #92400e); }
+        .badge-lider    { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .badge-operador { background: #f1f5f9; color: #475569; }
+        .topico-feedback { border: 1px solid #e2e8f0; border-left: 4px solid #d97706; border-radius: 8px; padding: 16px; margin-bottom: 14px; background: #fffbf5; }
+        .topico-feedback .tf-title { font-weight: 700; color: #92400e; font-size: 15px; margin-bottom: 4px; }
+        .topico-feedback .tf-desc  { font-size: 12px; color: #999; margin-bottom: 10px; line-height: 1.5; font-style: italic; }
+        .feedback-hist     { border: 1px solid #e2e8f0; border-left: 4px solid #d97706; border-radius: 8px; padding: 14px; margin-bottom: 10px; background: #fafcff; }
+        .feedback-hist-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+        .feedback-hist-date { font-weight: 700; color: #92400e; font-size: 14px; }
+        .fb-topico { margin-bottom: 10px; }
+        .fb-topico strong { color: #333; display: block; margin-bottom: 2px; font-size: 13px; }
+        .fb-topico p { font-size: 13px; color: #555; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+
+        /* ─── Sistema de Pontuação tab ─── */
+        .pontuacao-hero { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; border-radius: 14px; padding: 28px 32px; margin-bottom: 24px; }
+        .pontuacao-hero h2 { margin: 0 0 6px 0; font-size: 22px; }
+        .pontuacao-hero p  { margin: 0; opacity: 0.85; font-size: 14px; }
+        .formula-box { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #3b82f6; border-radius: 12px; padding: 18px 24px; text-align: center; margin: 16px 0; }
+        .formula-box .formula-text { font-size: 15px; font-weight: 700; color: #1e40af; font-family: monospace; }
+        .formula-box .formula-sub  { font-size: 12px; color: #64748b; margin-top: 6px; }
+        .base-box { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 16px 0; }
+        .base-pill { background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50px; padding: 10px 22px; font-size: 14px; font-weight: 700; color: #334155; text-align: center; }
+        .base-pill span { display: block; font-size: 24px; color: #1a365d; font-weight: 900; }
+        .score-mechanic-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        .score-mechanic-table th { background: #f8fafc; color: #475569; font-size: 12px; padding: 10px 14px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+        .score-mechanic-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: middle; }
+        .score-mechanic-table tr:last-child td { border-bottom: none; }
+        .mechanic-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; }
+        .mb-pos  { background: #dcfce7; color: #166534; }
+        .mb-neu  { background: #fef9c3; color: #713f12; }
+        .mb-neg  { background: #fee2e2; color: #991b1b; }
+        .mb-ns   { background: #f1f5f9; color: #475569; }
+        .delta-badge { font-size: 16px; font-weight: 900; }
+        .delta-pos { color: #16a34a; }
+        .delta-neg { color: #dc2626; }
+        .delta-neu { color: #92400e; }
+        .delta-ns  { color: #94a3b8; }
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; margin-top: 14px; }
+        .topic-explain-card { border-radius: 12px; padding: 18px 20px; border: 1px solid #e2e8f0; background: white; }
+        .topic-explain-card .tec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .topic-explain-card .tec-icon  { font-size: 26px; }
+        .topic-explain-card .tec-name  { font-size: 15px; font-weight: 700; }
+        .topic-explain-card .tec-sub   { font-size: 11px; color: #888; font-style: italic; margin-top: 2px; }
+        .topic-explain-card .tec-body  { font-size: 13px; color: #475569; line-height: 1.65; }
+        .topic-explain-card .tec-tag   { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-top: 8px; margin-right: 4px; }
+        .prod-rules-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 14px 0; }
+        .prod-rule-card { border-radius: 10px; padding: 16px 18px; text-align: center; }
+        .prod-rule-card .prc-icon  { font-size: 28px; margin-bottom: 6px; }
+        .prod-rule-card .prc-label { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+        .prod-rule-card .prc-range { font-size: 12px; color: #555; margin-bottom: 6px; font-style: italic; }
+        .prod-rule-card .prc-effect{ font-size: 13px; font-weight: 900; }
+        .prc-green  { background: #f0fdf4; border: 2px solid #86efac; }
+        .prc-gray   { background: #f8fafc; border: 2px solid #cbd5e1; }
+        .prc-orange { background: #fff7ed; border: 2px solid #fed7aa; }
+        .abaixo-rule-box { background: #fff7ed; border: 2px solid #fb923c; border-radius: 12px; padding: 18px 20px; margin-top: 14px; }
+        .abaixo-rule-box h4 { margin: 0 0 10px 0; color: #c2410c; font-size: 14px; }
+        .abaixo-timeline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+        .atl-step { border-radius: 10px; padding: 10px 14px; text-align: center; font-size: 12px; font-weight: 700; flex: 1; min-width: 80px; }
+        .atl-free  { background: #fef9c3; color: #713f12; border: 1px solid #fde68a; }
+        .atl-pen   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .atl-arrow { font-size: 18px; color: #94a3b8; flex-shrink: 0; }
+        .class-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        .class-table th { background: #f8fafc; color: #475569; font-size: 12px; padding: 10px 16px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+        .class-table td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; font-weight: 600; }
+        .class-table tr:last-child td { border-bottom: none; }
+        .class-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+        .info-note { background: #f0f9ff; border: 1px solid #bae6fd; border-left: 4px solid #0ea5e9; border-radius: 8px; padding: 14px 18px; margin-top: 14px; font-size: 13px; color: #0c4a6e; line-height: 1.65; }
+        .info-note strong { display: block; margin-bottom: 4px; font-size: 14px; }
+        .patrol-note { background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #22c55e; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #14532d; line-height: 1.65; }
+        .lider-note  { background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #78350f; line-height: 1.65; }
+        .section-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0 20px 0; }
+        .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+        .section-divider span { font-size: 13px; font-weight: 700; color: #94a3b8; white-space: nowrap; }
+        .example-box { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 16px 20px; margin-top: 12px; }
+        .example-box .ex-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+        .example-row { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px; flex-wrap: wrap; }
+        .example-row:last-child { margin-bottom: 0; }
+        /* ─── Print area for avaliação ─── */
+        #printArea { }
+        @media print {
+            .tabs, .filter-bar, .btn-group, button, header, .no-print { display: none !important; }
+            .tab-content { display: block !important; }
+            body { background: white; padding: 0; }
+            #printArea { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════ LOGIN SCREEN ════ -->
+<div id="login-screen" style="display:none;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);padding:40px 36px;width:100%;max-width:380px;">
+        <div style="text-align:center;margin-bottom:28px;">
+            <div style="font-size:48px;margin-bottom:8px;">🏭</div>
+            <h2 style="color:#1a365d;font-size:20px;font-weight:700;">Sistema de Avaliação</h2>
+            <p style="color:#888;font-size:13px;margin-top:4px;">社員評価システム</p>
+        </div>
+        <div style="margin-bottom:16px;">
+            <label style="display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px;">Email</label>
+            <input id="login-email" type="email" placeholder="seu@email.com"
+                style="width:100%;padding:10px 14px;border:1.5px solid #dde1e7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div style="margin-bottom:24px;">
+            <label style="display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:6px;">Senha / パスワード</label>
+            <input id="login-password" type="password" placeholder="••••••••"
+                style="width:100%;padding:10px 14px;border:1.5px solid #dde1e7;border-radius:8px;font-size:14px;outline:none;"
+                onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+        <div id="login-error" style="display:none;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;"></div>
+        <button onclick="doLogin()" id="login-btn"
+            style="width:100%;padding:12px;background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">
+            🔐 Entrar / ログイン
+        </button>
+    </div>
+</div>
+
+<!-- ════ APP (hidden until authenticated) ════ -->
+<div id="app-wrapper" style="display:none;">
+
+<header>
+    <div style="display:flex;align-items:center;gap:14px;">
+        <img id="companyLogo" src="LOGO%203.gif" alt="" style="height:44px;object-fit:contain;" onerror="this.style.display='none'">
+        <h1>🏭 <span data-ja="社員評価システム" data-pt="Sistema de Avaliação">社員評価システム</span></h1>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+        <button class="lang-btn" onclick="toggleLanguage()">🇧🇷 PT ／ 🇯🇵 JA</button>
+        <button class="lang-btn" onclick="doLogout()" style="background:rgba(255,255,255,0.15);">🚪 Sair</button>
+    </div>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" data-tab="tab-novos"        onclick="switchTab(event)" data-ja="📝 新規登録"    data-pt="📝 Novo Registro"    >📝 新規登録</button>
+    <button class="tab-btn"        data-tab="tab-seguranca"    onclick="switchTab(event)" data-ja="🔒 安全"        data-pt="🔒 Segurança"        >🔒 安全</button>
+    <button class="tab-btn"        data-tab="tab-qualidade"    onclick="switchTab(event)" data-ja="✅ 品質"        data-pt="✅ Qualidade"        >✅ 品質</button>
+    <button class="tab-btn"        data-tab="tab-cooperacao"   onclick="switchTab(event)" data-ja="🤝 協力"        data-pt="🤝 Cooperação"       >🤝 協力</button>
+    <button class="tab-btn"        data-tab="tab-moral"        onclick="switchTab(event)" data-ja="💡 モラル"      data-pt="💡 Moral"            >💡 モラル</button>
+    <button class="tab-btn"        data-tab="tab-produtividade"onclick="switchTab(event)" data-ja="📈 生産性"      data-pt="📈 Produtividade"    >📈 生産性</button>
+    <button class="tab-btn"        data-tab="tab-presenca"     onclick="switchTab(event)" data-ja="📅 出勤"        data-pt="📅 Presença"         >📅 出勤</button>
+    <button class="tab-btn"        data-tab="tab-patrol"       onclick="switchTab(event)" data-ja="🚶 巡回"        data-pt="🚶 Patrulha"         >🚶 巡回</button>
+    <button class="tab-btn"        data-tab="tab-avaliacao"    onclick="switchTab(event)" data-ja="👤 個人評価"    data-pt="👤 Avaliação"        >👤 個人評価</button>
+    <button class="tab-btn"        data-tab="tab-lideres"      onclick="switchTab(event)" data-ja="👑 リーダー"   data-pt="👑 Líderes"          >👑 リーダー</button>
+    <button class="tab-btn"        data-tab="tab-pontuacao"    onclick="switchTab(event)" data-ja="📊 評価システム" data-pt="📊 Pontuação"         >📊 Pontuação</button>
+    <button class="tab-btn"        data-tab="tab-config"       onclick="switchTab(event)" data-ja="⚙️ 設定"       data-pt="⚙️ Config"           >⚙️ 設定</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: NOVOS REGISTROS
+════════════════════════════════════════════════════ -->
+<div id="tab-novos" class="tab-content active">
+    <div class="card">
+        <h2>📝 <span data-ja="新規登録" data-pt="Novo Registro">新規登録</span></h2>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>👤 <span data-ja="社員" data-pt="Funcionário">社員</span></label>
+                <select id="novoEmp">
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📌 <span data-ja="トピック" data-pt="Tópico">トピック</span></label>
+                <select id="novoTopic" onchange="showTopicFields()">
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                    <option value="seguranca"     data-ja="🔒 安全"       data-pt="🔒 Segurança"     >🔒 安全</option>
+                    <option value="qualidade"     data-ja="✅ 品質"       data-pt="✅ Qualidade"     >✅ 品質</option>
+                    <option value="cooperacao"    data-ja="🤝 協力"       data-pt="🤝 Cooperação"    >🤝 協力</option>
+                    <option value="moral"         data-ja="💡 モラル"     data-pt="💡 Moral"         >💡 モラル</option>
+                    <option value="produtividade" data-ja="📈 生産性"     data-pt="📈 Produtividade" >📈 生産性</option>
+                    <option value="presenca"      data-ja="📅 出勤"       data-pt="📅 Presença"      >📅 出勤</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)">Responsável (opcional)</span></label>
+            <select id="novoResp">
+                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável">Sem responsável</span> —</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>📅 <span data-ja="日付" data-pt="Data">日付</span></label>
+            <div style="display:flex;gap:16px;margin-bottom:8px;">
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:500;font-size:13px;color:#555;">
+                    <input type="radio" name="dateMode" value="month" onchange="toggleDateMode()" checked>
+                    <span data-ja="年月" data-pt="Ano/Mês">年月</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:500;font-size:13px;color:#555;">
+                    <input type="radio" name="dateMode" value="full" onchange="toggleDateMode()">
+                    <span data-ja="完全な日付" data-pt="Data Completa">完全な日付</span>
+                </label>
+            </div>
+            <div id="date-month-mode" style="display:flex;gap:8px;">
+                <select id="novoYear" onchange="syncMonthDate()" style="flex:1;padding:9px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:14px;font-family:inherit;background:#fafbfd;"></select>
+                <select id="novoMonth" onchange="syncMonthDate()" style="flex:1;padding:9px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:14px;font-family:inherit;background:#fafbfd;">
+                    <option value="01" data-ja="1月"  data-pt="Janeiro" >1月</option><option value="02" data-ja="2月"  data-pt="Fevereiro">2月</option>
+                    <option value="03" data-ja="3月"  data-pt="Março"   >3月</option><option value="04" data-ja="4月"  data-pt="Abril"    >4月</option>
+                    <option value="05" data-ja="5月"  data-pt="Maio"    >5月</option><option value="06" data-ja="6月"  data-pt="Junho"    >6月</option>
+                    <option value="07" data-ja="7月"  data-pt="Julho"   >7月</option><option value="08" data-ja="8月"  data-pt="Agosto"   >8月</option>
+                    <option value="09" data-ja="9月"  data-pt="Setembro">9月</option><option value="10" data-ja="10月" data-pt="Outubro"  >10月</option>
+                    <option value="11" data-ja="11月" data-pt="Novembro">11月</option><option value="12" data-ja="12月" data-pt="Dezembro">12月</option>
+                </select>
+            </div>
+            <div id="date-full-mode" style="display:none;">
+                <input type="date" id="novoDateFull" onchange="syncFullDate()"
+                    style="width:100%;padding:9px 12px;border:1.5px solid #dde1e7;border-radius:7px;font-size:14px;font-family:inherit;background:#fafbfd;">
+            </div>
+            <input type="hidden" id="novoDate">
+        </div>
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;">
+                <input type="checkbox" id="novoTimeCheck" onchange="toggleTimeField()" style="width:auto;accent-color:#2b6cb0;width:15px;height:15px;">
+                🕐 <span data-ja="時間を追加する（任意）" data-pt="Adicionar horário (opcional)">時間を追加する（任意）</span>
+            </label>
+            <input type="time" id="novoTime" class="hidden" style="margin-top:8px;">
+        </div>
+
+        <div id="topicFields" class="hidden"></div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="saveRecord()">
+                💾 <span data-ja="保存する" data-pt="Salvar">保存する</span>
+            </button>
+            <button class="btn-secondary" onclick="clearNovoForm()">
+                <span data-ja="クリア" data-pt="Limpar">クリア</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: SEGURANÇA
+════════════════════════════════════════════════════ -->
+<div id="tab-seguranca" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-seguranca">
+            <span class="t-icon">🔒</span>
+            <h2 data-ja="安全" data-pt="Segurança">安全</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="seg-year" onchange="renderTopicList('seguranca')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="seg-emp" onchange="renderTopicList('seguranca')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-seguranca"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: QUALIDADE
+════════════════════════════════════════════════════ -->
+<div id="tab-qualidade" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-qualidade">
+            <span class="t-icon">✅</span>
+            <h2 data-ja="品質" data-pt="Qualidade">品質</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="qual-year" onchange="renderTopicList('qualidade')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="qual-emp" onchange="renderTopicList('qualidade')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-qualidade"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: COOPERAÇÃO
+════════════════════════════════════════════════════ -->
+<div id="tab-cooperacao" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-cooperacao">
+            <span class="t-icon">🤝</span>
+            <h2 data-ja="協力" data-pt="Cooperação">協力</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="coop-year" onchange="renderTopicList('cooperacao')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="coop-emp" onchange="renderTopicList('cooperacao')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-cooperacao"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: MORAL
+════════════════════════════════════════════════════ -->
+<div id="tab-moral" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-moral">
+            <span class="t-icon">💡</span>
+            <h2 data-ja="モラル" data-pt="Moral">モラル</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="moral-year" onchange="renderTopicList('moral')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="moral-emp" onchange="renderTopicList('moral')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-moral"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: PRODUTIVIDADE
+════════════════════════════════════════════════════ -->
+<div id="tab-produtividade" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-produtividade">
+            <span class="t-icon">📈</span>
+            <h2 data-ja="生産性" data-pt="Produtividade">生産性</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="prod-year" onchange="renderTopicList('produtividade')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="prod-emp" onchange="renderTopicList('produtividade')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-produtividade"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: PRESENÇA
+════════════════════════════════════════════════════ -->
+<div id="tab-presenca" class="tab-content">
+    <div class="card">
+        <div class="topic-banner banner-presenca">
+            <span class="t-icon">📅</span>
+            <h2 data-ja="出勤" data-pt="Presença">出勤</h2>
+        </div>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label data-ja="年度" data-pt="Ano Fiscal">年度</label>
+                <select id="pres-year" onchange="renderTopicList('presenca')"></select>
+            </div>
+            <div class="form-group">
+                <label data-ja="社員でフィルター" data-pt="Funcionário">👤</label>
+                <select id="pres-emp" onchange="renderTopicList('presenca')">
+                    <option value="" data-ja="すべて" data-pt="Todos">すべて</option>
+                </select>
+            </div>
+        </div>
+        <div id="list-presenca"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: PATRULHA / 巡回
+════════════════════════════════════════════════════ -->
+<div id="tab-patrol" class="tab-content">
+    <div class="topic-banner banner-patrol">
+        <span class="t-icon">🚶</span>
+        <h2 data-ja="巡回記録" data-pt="Registro de Patrulha">巡回記録</h2>
+    </div>
+
+    <!-- ── New patrol form ── -->
+    <div class="card">
+        <h2>📝 <span data-ja="新規巡回記録" data-pt="Nova Patrulha">新規巡回記録</span></h2>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>👤 <span data-ja="対象者" data-pt="Funcionário">対象者</span></label>
+                <select id="patrol-emp">
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📅 <span data-ja="日付" data-pt="Data">日付</span></label>
+                <input type="date" id="patrol-date">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>🧑‍💼 <span data-ja="担当者（任意）" data-pt="Responsável (opcional)">Responsável (opcional)</span></label>
+            <select id="patrol-resp">
+                <option value="">— <span data-ja="担当者なし" data-pt="Sem responsável">Sem responsável</span> —</option>
+            </select>
+        </div>
+
+        <!-- Sub-section divider: Segurança -->
+        <div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding-top:12px;border-top:1px solid #e8ecf0;">
+            <span style="font-size:18px;">🔒</span>
+            <span style="font-weight:700;color:#b91c1c;font-size:15px;" data-ja="安全" data-pt="Segurança">安全</span>
+        </div>
+        <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
+                <input type="checkbox" id="patrol-seg-noscore" onchange="togglePatrolNoScore('seg')">
+                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)">採点なし（記録のみ）</span>
+            </label>
+        </div>
+        <div class="form-group">
+            <label data-ja="結果" data-pt="Resultado">結果</label>
+            <select id="patrol-seg-result">
+                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo">ポジティブ</span></option>
+                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção">要注意</span></option>
+                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo">ネガティブ</span></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)">コメント（任意）</span></label>
+            <textarea id="patrol-seg-comment" rows="2"></textarea>
+        </div>
+
+        <!-- Sub-section divider: Qualidade -->
+        <div style="display:flex;align-items:center;gap:10px;margin:18px 0 12px;padding-top:12px;border-top:1px solid #e8ecf0;">
+            <span style="font-size:18px;">✅</span>
+            <span style="font-weight:700;color:#047857;font-size:15px;" data-ja="品質" data-pt="Qualidade">品質</span>
+        </div>
+        <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
+                <input type="checkbox" id="patrol-qual-noscore" onchange="togglePatrolNoScore('qual')">
+                📋 <span data-ja="採点なし（記録のみ）" data-pt="Sem pontuação (apenas registro)">採点なし（記録のみ）</span>
+            </label>
+        </div>
+        <div class="form-group">
+            <label data-ja="結果" data-pt="Resultado">結果</label>
+            <select id="patrol-qual-result">
+                <option value="positivo">✅ <span data-ja="ポジティブ" data-pt="Positivo">ポジティブ</span></option>
+                <option value="atencao">⚠️ <span data-ja="要注意" data-pt="Atenção">要注意</span></option>
+                <option value="negativo">❌ <span data-ja="ネガティブ" data-pt="Negativo">ネガティブ</span></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>💬 <span data-ja="コメント（任意）" data-pt="Comentário (opcional)">コメント（任意）</span></label>
+            <textarea id="patrol-qual-comment" rows="2"></textarea>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="savePatrol()">
+                💾 <span data-ja="保存する" data-pt="Salvar Patrulha">保存する</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Patrol records list ── -->
+    <div class="card">
+        <h2>📋 <span data-ja="巡回履歴" data-pt="Histórico de Patrulhas">巡回履歴</span></h2>
+        <div class="filter-bar">
+            <div class="form-group">
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <select id="patrol-list-year" onchange="renderPatrolList()"></select>
+            </div>
+            <div class="form-group">
+                <label>👤 <span data-ja="社員" data-pt="Funcionário">社員</span></label>
+                <select id="patrol-list-emp" onchange="renderPatrolList()">
+                    <option value="">— <span data-ja="全員" data-pt="Todos">全員</span> —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📌 <span data-ja="区分" data-pt="Tipo">区分</span></label>
+                <select id="patrol-list-topic" onchange="renderPatrolList()">
+                    <option value="">— <span data-ja="全て" data-pt="Todos">全て</span> —</option>
+                    <option value="seguranca">🔒 <span data-ja="安全" data-pt="Segurança">安全</span></option>
+                    <option value="qualidade">✅ <span data-ja="品質" data-pt="Qualidade">品質</span></option>
+                </select>
+            </div>
+        </div>
+        <div id="patrolList"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: AVALIAÇÃO INDIVIDUAL
+════════════════════════════════════════════════════ -->
+<div id="tab-avaliacao" class="tab-content">
+    <div class="card">
+        <h2>👤 <span data-ja="個人評価" data-pt="Avaliação Individual">個人評価</span></h2>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>👤 <span data-ja="社員を選択" data-pt="Selecionar Funcionário">社員を選択</span></label>
+                <select id="aval-emp" onchange="renderAvaliacao()">
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <select id="aval-year" onchange="renderAvaliacao()"></select>
+            </div>
+        </div>
+    </div>
+    <div id="avalContent"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: LÍDERES
+════════════════════════════════════════════════════ -->
+<div id="tab-lideres" class="tab-content">
+    <div class="topic-banner banner-lideres">
+        <span class="t-icon">👑</span>
+        <h2 data-ja="リーダー評価" data-pt="Avaliação de Líderes">リーダー評価</h2>
+    </div>
+    <div class="card">
+        <div class="grid-2">
+            <div class="form-group">
+                <label>👑 <span data-ja="リーダーを選択" data-pt="Selecionar Líder">リーダーを選択</span></label>
+                <select id="lider-emp" onchange="renderLideresContent()">
+                    <option value="">— <span data-ja="選択してください" data-pt="Selecione">選択</span> —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📅 <span data-ja="年度" data-pt="Ano Fiscal">年度</span></label>
+                <select id="lider-year" onchange="renderLideresContent()"></select>
+            </div>
+        </div>
+    </div>
+    <div id="lideresContent"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: SISTEMA DE PONTUAÇÃO
+════════════════════════════════════════════════════ -->
+<div id="tab-pontuacao" class="tab-content">
+
+    <!-- HERO -->
+    <div class="pontuacao-hero">
+        <h2>📊 <span data-ja="評価システムの仕組み" data-pt="Como funciona o Sistema de Avaliação">Como funciona o Sistema de Avaliação</span></h2>
+        <p data-ja="各社員は6つのトピックで評価されます。最終スコアはその平均値です。" data-pt="Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6.">Cada funcionário é avaliado em 6 tópicos. A nota final é a média dos 6.</p>
+    </div>
+
+    <!-- SECÇÃO 1: FÓRMULA FINAL -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">🎯 <span data-ja="計算式" data-pt="Fórmula Final">Fórmula Final</span></h3>
+
+        <div class="base-box">
+            <div class="base-pill">
+                <span>0,0 ~ 10,0</span>
+                <span data-ja="各トピックの範囲" data-pt="nota por tópico (0 a 10)">nota por tópico (0 a 10)</span>
+            </div>
+            <div style="font-size:28px;color:#94a3b8;">→</div>
+            <div class="base-pill" style="border-color:#3b82f6;background:#eff6ff;">
+                <span data-ja="平均" data-pt="Média" style="color:#1d4ed8;">Média</span>
+                <span data-ja="6トピックの平均 = 最終スコア" data-pt="média dos 6 tópicos = nota final">média dos 6 tópicos = nota final</span>
+            </div>
+        </div>
+
+        <div class="formula-box">
+            <div class="formula-text" data-ja="最終スコア = (安全 + 品質 + 協力 + モラル + 生産性 + 出勤) ÷ 6" data-pt="Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6">Nota Final = (Segurança + Qualidade + Cooperação + Moral + Produtividade + Presença) ÷ 6</div>
+            <div class="formula-sub" data-ja="記録がないトピックは中立（5.0）として計算されます" data-pt="Tópico sem registros conta como neutro (5,0) na média">Tópico sem registros conta como neutro (5,0) na média</div>
+        </div>
+
+        <div class="info-note">
+            <strong>💡 <span data-ja="重要なポイント" data-pt="Ponto importante">Ponto importante</span></strong>
+            <span data-ja="各トピックのスコアは0以下にも10以上にもなりません。記録が多いほど実際の姿を反映します。" data-pt="A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação.">A nota de cada tópico nunca passa de 10 nem fica abaixo de 0. Quanto mais registros, mais fiel à realidade é a avaliação.</span>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 2: TIPOS DE REGISTRO -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">⚖️ <span data-ja="登録の種類と役割" data-pt="Tipos de Registro e seu papel">Tipos de Registro e seu papel</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性以外のすべてのトピックに適用されます" data-pt="Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)">Aplica-se a todos os tópicos exceto Produtividade (que tem regras próprias)</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px;">
+            <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;">
+                <div style="font-weight:700;color:#166534;font-size:15px;margin-bottom:6px;">✅ <span data-ja="ポジティブ" data-pt="Positivo">Positivo</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="良い行動・成果・改善を記録します。トピックのスコアが上がります。" data-pt="Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico.">Registra bom comportamento, resultado acima do esperado ou melhora observada. Eleva o score do tópico.</div>
+            </div>
+            <div style="background:#fefce8;border:1.5px solid #fde047;border-radius:10px;padding:14px 16px;">
+                <div style="font-weight:700;color:#854d0e;font-size:15px;margin-bottom:6px;">⚠️ <span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="記録に残しますが、スコアは変わりません。注意喚起・観察中の事案などに使います。" data-pt="Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais.">Registra o ocorrido sem alterar a nota. Ideal para avisos verbais, situações em acompanhamento ou observações pontuais.</div>
+            </div>
+            <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px 16px;">
+                <div style="font-weight:700;color:#991b1b;font-size:15px;margin-bottom:6px;">❌ <span data-ja="ネガティブ" data-pt="Negativo">Negativo</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="規則違反・事故・業務上の問題を記録します。トピックのスコアが下がります。" data-pt="Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico.">Registra infrações, acidentes ou problemas graves de comportamento. Reduz o score do tópico.</div>
+            </div>
+            <div style="background:#f8fafc;border:1.5px solid #cbd5e1;border-radius:10px;padding:14px 16px;">
+                <div style="font-weight:700;color:#475569;font-size:15px;margin-bottom:6px;">📋 <span data-ja="採点なし" data-pt="Sem Pontuação">Sem Pontuação</span></div>
+                <div style="font-size:13px;color:#374151;" data-ja="点数に影響させずに記録だけ残したいときに使います。履歴として残ります。" data-pt="Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos.">Mantém o registro no histórico sem afetar a nota. Use para conversas registradas ou eventos informativos.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 3: OS 6 TÓPICOS -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">📋 <span data-ja="評価対象の6トピック" data-pt="Os 6 Tópicos Avaliados">Os 6 Tópicos Avaliados</span></h3>
+        <div class="topic-grid">
+
+            <div class="topic-explain-card" style="border-left:4px solid #ef4444;">
+                <div class="tec-header">
+                    <span class="tec-icon">🔒</span>
+                    <div>
+                        <div class="tec-name" style="color:#ef4444;" data-ja="安全" data-pt="Segurança">Segurança</div>
+                        <div class="tec-sub" data-ja="安全" data-pt="Segurança">安全</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="作業中の安全ルールの遵守を評価します。ヘルメット、手袋の着用、危険行為の有無、安全手順の遵守などを記録します。" data-pt="Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno.">Avalia o cumprimento das normas de segurança no trabalho. Inclui uso de EPIs, condutas de risco, acidentes, e boas práticas observadas durante o turno.</div>
+                <span class="tec-tag" style="background:#fee2e2;color:#991b1b;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+            </div>
+
+            <div class="topic-explain-card" style="border-left:4px solid #10b981;">
+                <div class="tec-header">
+                    <span class="tec-icon">✅</span>
+                    <div>
+                        <div class="tec-name" style="color:#10b981;" data-ja="品質" data-pt="Qualidade">Qualidade</div>
+                        <div class="tec-sub" data-ja="品質" data-pt="Qualidade">品質</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="業務の正確さと丁寧さを評価します。誤仕分け、破損品、バーコード読み取りミスなどのミスを記録し、逆に丁寧な作業も記録します。" data-pt="Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui.">Avalia a precisão e o cuidado na execução das tarefas. Erros de separação, produtos danificados, releituras e boas práticas de qualidade são registrados aqui.</div>
+                <span class="tec-tag" style="background:#d1fae5;color:#065f46;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+            </div>
+
+            <div class="topic-explain-card" style="border-left:4px solid #3b82f6;">
+                <div class="tec-header">
+                    <span class="tec-icon">🤝</span>
+                    <div>
+                        <div class="tec-name" style="color:#3b82f6;" data-ja="協力" data-pt="Cooperação">Cooperação</div>
+                        <div class="tec-sub" data-ja="協力" data-pt="Cooperação">協力</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="チームワークと協調性を評価します。同僚への支援、指示への従い方、チームへの貢献姿勢などを記録します。" data-pt="Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo.">Avalia o espírito de equipe e a disposição para ajudar. Inclui suporte a colegas, obediência a instruções, e atitudes que fortalecem ou prejudicam o grupo.</div>
+                <span class="tec-tag" style="background:#dbeafe;color:#1e40af;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+            </div>
+
+            <div class="topic-explain-card" style="border-left:4px solid #f59e0b;">
+                <div class="tec-header">
+                    <span class="tec-icon">💡</span>
+                    <div>
+                        <div class="tec-name" style="color:#b45309;" data-ja="モラル" data-pt="Moral">Moral</div>
+                        <div class="tec-sub" data-ja="モラル" data-pt="Moral">モラル</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="職場での態度と行動を評価します。服装・言葉遣い・携帯電話の使用・作業中の態度などを記録します。" data-pt="Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral.">Avalia postura, disciplina e comportamento no ambiente de trabalho. Uniforme, linguagem, uso do celular, respeito às regras internas e atitude geral.</div>
+                <span class="tec-tag" style="background:#fef3c7;color:#92400e;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+            </div>
+
+            <div class="topic-explain-card" style="border-left:4px solid #8b5cf6;">
+                <div class="tec-header">
+                    <span class="tec-icon">📈</span>
+                    <div>
+                        <div class="tec-name" style="color:#7c3aed;" data-ja="生産性" data-pt="Produtividade">Produtividade</div>
+                        <div class="tec-sub" data-ja="生産性" data-pt="Produtividade">生産性</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="設定された目標に対する実績で評価します。目標比±の範囲により自動分類されます。詳細は下のセクションをご覧ください。" data-pt="Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo.">Avalia o desempenho em relação à meta definida por serviço. A classificação é automática com base na diferença entre o valor registrado e a meta. Veja as regras detalhadas abaixo.</div>
+                <span class="tec-tag" style="background:#ede9fe;color:#5b21b6;" data-ja="自動分類（特別ルール）" data-pt="Classificação automática (regras especiais)">Classificação automática (regras especiais)</span>
+            </div>
+
+            <div class="topic-explain-card" style="border-left:4px solid #06b6d4;">
+                <div class="tec-header">
+                    <span class="tec-icon">📅</span>
+                    <div>
+                        <div class="tec-name" style="color:#0e7490;" data-ja="出勤" data-pt="Presença">Presença</div>
+                        <div class="tec-sub" data-ja="出勤" data-pt="Presença">出勤</div>
+                    </div>
+                </div>
+                <div class="tec-body" data-ja="出勤率と時間厳守を評価します。無断欠勤、遅刻、早退は記録されます。出勤率が良ければポジティブとして記録できます。" data-pt="Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo.">Avalia assiduidade e pontualidade. Faltas não justificadas, atrasos e saídas antecipadas são registrados como negativos. Boas sequências de presença podem ser registradas como positivo.</div>
+                <span class="tec-tag" style="background:#cffafe;color:#155e75;" data-ja="ポジティブ/注意/ネガティブ" data-pt="Positivo / Atenção / Negativo">Positivo / Atenção / Negativo</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SECÇÃO 4: PRODUTIVIDADE (REGRAS ESPECIAIS) -->
+    <div class="card" style="border-left:5px solid #8b5cf6;">
+        <h3 style="margin-top:0;color:#7c3aed;">📈 <span data-ja="生産性の特別ルール" data-pt="Regras Especiais: Produtividade">Regras Especiais: Produtividade</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="生産性は目標と実績の差によって自動分類されます。手動でポジティブ/ネガティブを選ぶ必要はありません。" data-pt="Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente.">Na Produtividade, o sistema classifica automaticamente com base na diferença entre o valor registrado e a meta configurada. Não é preciso escolher Positivo/Negativo manualmente.</p>
+
+        <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+            <p style="margin:0;font-size:13px;color:#4c1d95;font-weight:600;" data-ja="例：目標 = 70 の場合" data-pt="Exemplo com meta = 70">Exemplo com meta = 70</p>
+        </div>
+
+        <div class="prod-rules-box">
+            <div class="prod-rule-card prc-green">
+                <div class="prc-icon">🚀</div>
+                <div class="prc-label" data-ja="目標大幅超過" data-pt="Acima da Meta (+10)">Acima da Meta (+10)</div>
+                <div class="prc-range" data-ja="例：81以上（目標+10超え）" data-pt="Ex: val &gt; 80 (meta + 10)">Ex: val &gt; 80 (meta + 10)</div>
+                <div class="prc-effect" style="color:#16a34a;font-weight:700;" data-ja="🚀 スコアアップ" data-pt="🚀 Eleva a nota">🚀 Eleva a nota</div>
+            </div>
+            <div class="prod-rule-card prc-gray">
+                <div class="prc-icon">➡️</div>
+                <div class="prc-label" data-ja="目標付近（上）" data-pt="Na faixa da meta">Na faixa da meta</div>
+                <div class="prc-range" data-ja="例：70〜80（目標〜目標+10）" data-pt="Ex: 70 ≤ val ≤ 80">Ex: 70 ≤ val ≤ 80</div>
+                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標内" data-pt="✅ Na meta">✅ Na meta</div>
+            </div>
+            <div class="prod-rule-card prc-gray">
+                <div class="prc-icon">➡️</div>
+                <div class="prc-label" data-ja="目標近く（下）" data-pt="Próximo da meta (−5)">Próximo da meta (−5)</div>
+                <div class="prc-range" data-ja="例：65〜69（目標−5〜目標未満）" data-pt="Ex: 65 ≤ val ≤ 69">Ex: 65 ≤ val ≤ 69</div>
+                <div class="prc-effect" style="color:#0e7490;font-weight:700;" data-ja="✅ 目標付近" data-pt="✅ Próximo da meta">✅ Próximo da meta</div>
+            </div>
+            <div class="prod-rule-card prc-orange">
+                <div class="prc-icon">⚠️</div>
+                <div class="prc-label" data-ja="目標大幅未達" data-pt="Abaixo da meta (−5)">Abaixo da meta (−5)</div>
+                <div class="prc-range" data-ja="例：64以下（目標−5未満）" data-pt="Ex: val &lt; 65 (abaixo de meta − 5)">Ex: val &lt; 65 (abaixo de meta − 5)</div>
+                <div class="prc-effect" style="color:#c2410c;" data-ja="特別ルール（下記参照）" data-pt="Regra especial (ver abaixo)">Regra especial (ver abaixo)</div>
+            </div>
+        </div>
+
+        <div class="abaixo-rule-box">
+            <h4>⚠️ <span data-ja="「目標大幅未達」の特別ルール" data-pt="Regra especial para 'Abaixo da meta'">Regra especial para "Abaixo da meta"</span></h4>
+            <p style="margin:0 0 10px 0;font-size:13px;color:#7c2d12;" data-ja="最初の4件は注意扱い（スコアへの影響なし）。5件目以降はスコアが下がります。回復の余地を与えるためのルールです。" data-pt="Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar.">Os primeiros 4 registros abaixo da meta são tratados como Atenção (sem impacto na nota). A partir do 5º, o score do tópico começa a cair. Isso dá margem para recuperação antes de penalizar.</p>
+            <div class="abaixo-timeline">
+                <div class="atl-step atl-free">1º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-arrow">→</div>
+                <div class="atl-step atl-free">2º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-arrow">→</div>
+                <div class="atl-step atl-free">3º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-arrow">→</div>
+                <div class="atl-step atl-free">4º<br><span data-ja="注意" data-pt="Atenção">Atenção</span></div>
+                <div class="atl-arrow">→</div>
+                <div class="atl-step atl-pen"><span data-ja="5回目以降" data-pt="5º em diante">5º em diante</span><br><span data-ja="スコアダウン" data-pt="score ↓">score ↓</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 5: CLASSIFICAÇÃO FINAL -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">🏆 <span data-ja="最終スコアの分類" data-pt="Classificação da Nota Final">Classificação da Nota Final</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;" data-ja="6つのトピックの平均スコアで最終評価が決まります。" data-pt="A nota final (média dos 6 tópicos) determina a classificação geral do funcionário.">A nota final (média dos 6 tópicos) determina a classificação geral do funcionário.</p>
+
+        <table class="class-table">
+            <thead>
+                <tr>
+                    <th data-ja="分類" data-pt="Classificação">Classificação</th>
+                    <th data-ja="点数範囲" data-pt="Faixa de Nota">Faixa de Nota</th>
+                    <th data-ja="意味" data-pt="Significado">Significado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="class-dot" style="background:#10b981;"></span><strong style="color:#065f46;" data-ja="平均以上" data-pt="Acima da Média">Acima da Média</strong></td>
+                    <td><strong style="color:#10b981;">7,1 ~ 10,0</strong></td>
+                    <td style="font-size:13px;color:#475569;" data-ja="目標を上回る高い実績。継続して表彰・インセンティブの対象。" data-pt="Desempenho consistentemente acima do esperado. Funcionário de referência positiva.">Desempenho consistentemente acima do esperado. Funcionário de referência positiva.</td>
+                </tr>
+                <tr>
+                    <td><span class="class-dot" style="background:#f59e0b;"></span><strong style="color:#b45309;" data-ja="平均" data-pt="Média">Média</strong></td>
+                    <td><strong style="color:#f59e0b;">5,0 ~ 7,0</strong></td>
+                    <td style="font-size:13px;color:#475569;" data-ja="期待される水準を満たしています。安定した成果を出しています。" data-pt="Atende às expectativas. Desempenho estável dentro do padrão esperado.">Atende às expectativas. Desempenho estável dentro do padrão esperado.</td>
+                </tr>
+                <tr>
+                    <td><span class="class-dot" style="background:#ef4444;"></span><strong style="color:#991b1b;" data-ja="平均以下" data-pt="Abaixo da Média">Abaixo da Média</strong></td>
+                    <td><strong style="color:#ef4444;">3,0 ~ 4,9</strong></td>
+                    <td style="font-size:13px;color:#475569;" data-ja="いくつかの問題が確認されています。フォローアップと改善計画が必要です。" data-pt="Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria.">Apresenta ocorrências negativas em um ou mais tópicos. Exige atenção e plano de melhoria.</td>
+                </tr>
+                <tr>
+                    <td><span class="class-dot" style="background:#6b7280;"></span><strong style="color:#374151;" data-ja="大幅に平均以下" data-pt="Muito Abaixo">Muito Abaixo</strong></td>
+                    <td><strong style="color:#6b7280;">0,0 ~ 2,9</strong></td>
+                    <td style="font-size:13px;color:#475569;" data-ja="多くの問題が確認されており、緊急の対応が必要です。" data-pt="Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança.">Múltiplas ocorrências negativas. Requer ação imediata e acompanhamento intensivo da liderança.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECÇÃO 6: PATRULHA -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">🚶 <span data-ja="巡回（パトロール）" data-pt="Patrulhas e seu impacto">Patrulhas e seu impacto</span></h3>
+        <div class="patrol-note">
+            <strong>🔒 <span data-ja="安全" data-pt="Segurança">Segurança</span> &amp; ✅ <span data-ja="品質" data-pt="Qualidade">Qualidade</span></strong><br>
+            <span data-ja="巡回中に記録された安全・品質の違反や優良事例は、それぞれのトピックに自動的に記録されます。つまり巡回での記録も評価に影響します。" data-pt="Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma.">Os registros feitos durante a Patrulha são automaticamente convertidos em registros de Segurança e Qualidade. Um negativo na patrulha equivale a um Negativo nesses tópicos — e afeta a nota do funcionário da mesma forma.</span>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 7: GRÁFICO RADAR -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">📡 <span data-ja="レーダーチャート" data-pt="Gráfico Radar">Gráfico Radar</span></h3>
+        <div class="info-note">
+            <strong>📊 <span data-ja="何を示しているのか？" data-pt="O que ele mostra?">O que ele mostra?</span></strong>
+            <span data-ja="レーダーチャートは6つのトピックを視覚的に表示します。スコアが低い順に時計回りに並べられます。中央の線（5.0）は基準線で、それより広い面積は良い評価を示します。" data-pt="O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral.">O radar exibe os 6 tópicos de forma visual. Eles são ordenados do menor para o maior escore no sentido horário. A linha de referência em 5,0 representa a média esperada — quanto maior a área preenchida, melhor o desempenho geral.</span>
+        </div>
+    </div>
+
+    <!-- SECÇÃO 8: AVALIAÇÃO DO LÍDER -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">👑 <span data-ja="リーダーによる評価" data-pt="Avaliação do Líder">Avaliação do Líder</span></h3>
+        <div class="lider-note">
+            <strong>💬 <span data-ja="定性評価（点数に影響しない）" data-pt="Avaliação qualitativa — não entra na nota">Avaliação qualitativa — não entra na nota</span></strong><br>
+            <span data-ja="リーダーはリーダーシップ、コミュニケーション、主体性、問題解決などの観点から定性的なフィードバックを記録できます。このフィードバックは点数には影響しませんが、個人評価ページに表示され、数字だけでは伝わらない人間的な側面を補完します。" data-pt="Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir.">Os líderes podem registrar feedback qualitativo sobre dimensões como liderança, comunicação, iniciativa e resolução de problemas. Esse feedback não afeta a nota automática, mas aparece na Avaliação Individual e serve como complemento humano ao sistema numérico — capturando aspectos que os registros sozinhos não conseguem refletir.</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     TAB: CONFIG
+════════════════════════════════════════════════════ -->
+<div id="tab-config" class="tab-content">
+    <div class="card">
+        <h2>⚙️ <span data-ja="社員管理" data-pt="Gerenciar Funcionários">社員管理</span></h2>
+        <button class="btn-primary" onclick="toggleAddEmpForm()">
+            ＋ <span data-ja="社員を追加" data-pt="Adicionar Funcionário">社員を追加</span>
+        </button>
+        <div id="addEmpForm" class="inline-form hidden">
+            <div class="grid-3">
+                <div class="form-group">
+                    <label data-ja="番号（バン）" data-pt="Nº Crachá">番号</label>
+                    <input type="text" id="newBan" placeholder="H240001">
+                </div>
+                <div class="form-group">
+                    <label data-ja="日本語名" data-pt="Nome (JP)">日本語名</label>
+                    <input type="text" id="newJp" placeholder="ヤマダ タロウ">
+                </div>
+                <div class="form-group">
+                    <label data-ja="ポルトガル語名" data-pt="Nome (PT)">Nome PT</label>
+                    <input type="text" id="newPt" placeholder="João Silva">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label data-ja="所属" data-pt="Setor">所属</label>
+                    <input type="text" id="newSetor" data-ja-ph="例: Aゾーン" data-pt-ph="Ex: Armazém" placeholder="Ex: Armazém">
+                </div>
+                <div class="form-group">
+                    <label data-ja="役職" data-pt="Cargo">役職</label>
+                    <select id="newCargo">
+                        <option value="operador" data-ja="👤 オペレーター" data-pt="👤 Operador">👤 オペレーター</option>
+                        <option value="lider"    data-ja="👑 リーダー"    data-pt="👑 Líder"    >👑 リーダー</option>
+                    </select>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn-primary" onclick="addEmployee()"><span data-ja="追加する" data-pt="Adicionar">追加する</span></button>
+                <button class="btn-secondary" onclick="toggleAddEmpForm()"><span data-ja="キャンセル" data-pt="Cancelar">キャンセル</span></button>
+            </div>
+        </div>
+        <div id="empList" style="margin-top:18px;"></div>
+    </div>
+
+    <!-- ── Fiscal Year Management ── -->
+    <div class="card">
+        <h2>📅 <span data-ja="年度管理" data-pt="Gerenciar Anos Fiscais">年度管理</span></h2>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+            <input type="number" id="new-ano-input" min="1" max="9999" data-ja-ph="例: 27 または 2027" data-pt-ph="Ex: 27 ou 2027" placeholder="Ex: 27 ou 2027"
+                style="padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;width:160px;">
+            <button class="btn-primary" onclick="addAnoFiscal()">
+                ＋ <span data-ja="年度を追加" data-pt="Adicionar Ano">年度を追加</span>
+            </button>
+        </div>
+        <div id="anos-list"></div>
+    </div>
+
+    <!-- ── Logo da Empresa ── -->
+    <div class="card">
+        <h2>🏢 <span data-ja="会社ロゴ" data-pt="Logo da Empresa">Logo da Empresa</span></h2>
+        <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
+            <span data-ja="PDFに表示されるロゴを設定します（PNG・JPG・GIF対応）" data-pt="Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)">Defina o logo que aparecerá nos PDFs gerados (PNG, JPG ou GIF)</span>
+        </p>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <div id="logo-preview-box" style="width:120px;height:60px;border:2px dashed #cbd5e1;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f8fafc;overflow:hidden;">
+                <img id="logo-preview-img" src="" alt="" style="max-width:116px;max-height:56px;object-fit:contain;display:none;">
+                <span id="logo-preview-empty" data-ja="ロゴなし" data-pt="Sem logo" style="font-size:11px;color:#94a3b8;">Sem logo</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <input type="file" id="logo-upload-input" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
+                <button class="btn-primary btn-sm" onclick="document.getElementById('logo-upload-input').click()">
+                    📁 <span data-ja="ロゴをアップロード" data-pt="Enviar Logo">Enviar Logo</span>
+                </button>
+                <button class="btn-secondary btn-sm" onclick="removeLogo()" id="logo-remove-btn" style="display:none;">
+                    🗑️ <span data-ja="ロゴを削除" data-pt="Remover Logo">Remover Logo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Responsáveis ── -->
+    <div class="card">
+        <h2>🧑‍💼 <span data-ja="担当者管理" data-pt="Gerenciar Responsáveis">Gerenciar Responsáveis</span></h2>
+        <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
+            <span data-ja="新規登録・巡回時に選択できる担当者リストです" data-pt="Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha">Lista de pessoas que podem ser selecionadas ao registrar ou fazer patrulha</span>
+        </p>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+            <input type="text" id="new-resp-input" data-ja-ph="担当者名を入力" data-pt-ph="Nome do responsável" placeholder="Nome do responsável" maxlength="60"
+                style="flex:1;min-width:180px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;">
+            <button class="btn-primary" onclick="addResponsavel()">
+                ＋ <span data-ja="追加" data-pt="Adicionar">Adicionar</span>
+            </button>
+        </div>
+        <div id="resp-list"></div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+let currentLang = 'ja';
+let radarChart  = null;
+let radarChart2 = null;
+
+// ─── Topic metadata ──────────────────────────────────────────────────────────
+const TOPICS = {
+    seguranca:     { ja:'安全',   pt:'Segurança',     icon:'🔒', color:'#ef4444' },
+    qualidade:     { ja:'品質',   pt:'Qualidade',     icon:'✅', color:'#10b981' },
+    cooperacao:    { ja:'協力',   pt:'Cooperação',    icon:'🤝', color:'#3b82f6' },
+    moral:         { ja:'モラル', pt:'Moral',         icon:'💡', color:'#f59e0b' },
+    produtividade: { ja:'生産性', pt:'Produtividade', icon:'📈', color:'#8b5cf6' },
+    presenca:      { ja:'出勤',   pt:'Presença',      icon:'📅', color:'#06b6d4' },
+};
+
+// Maps topic -> { year select id, emp filter select id }
+const TOPIC_FILTERS = {
+    seguranca:     { year:'seg-year',   emp:'seg-emp'  },
+    qualidade:     { year:'qual-year',  emp:'qual-emp' },
+    cooperacao:    { year:'coop-year',  emp:'coop-emp' },
+    moral:         { year:'moral-year', emp:'moral-emp'},
+    produtividade: { year:'prod-year',  emp:'prod-emp' },
+    presenca:      { year:'pres-year',  emp:'pres-emp' },
+};
+
+// ─── Supabase client ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://ztyicpnnvkviqhmwfezp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oaDjs_31ut8zZSoDnNEL_A_il8AUSTj';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── In-memory cache (populated from Supabase on login) ──────────────────────
+let _employees    = [];
+let _registros    = [];
+let _metas        = { picking:0, furidashi:0, kenzai:0, rappa:0, inpurasu:0, ax02:0 };
+let _anos         = [];
+let _responsaveis = [];
+let _logo         = '';
+let _patrols      = [];
+let _liderFbs     = [];
+
+// ─── Synchronous getters (read from in-memory cache) ─────────────────────────
+const getEmployees  = () => _employees;
+const getRegistros  = () => _registros;
+const getMetas      = () => _metas;
+const getLidFeedback= () => _liderFbs;
+const getPatrols    = () => _patrols;
+const getAnos       = () => _anos;
+const getResp       = () => _responsaveis;
+function getLogo()  { return _logo || ''; }
+
+// ─── Load all data from Supabase ─────────────────────────────────────────────
+async function loadAllData() {
+    const [empsR, regsR, metasR, anosR, respsR, cfgR, patsR, lfsR] = await Promise.all([
+        sb.from('employees').select('*').order('ban'),
+        sb.from('registros').select('*'),
+        sb.from('metas').select('*'),
+        sb.from('anos').select('*'),
+        sb.from('responsaveis').select('*').order('id'),
+        sb.from('configuracoes').select('*').eq('id', 1).maybeSingle(),
+        sb.from('patrols').select('*'),
+        sb.from('lider_feedbacks').select('*'),
+    ]);
+    _employees = (empsR.data || []).map(e => ({
+        id: e.id, ban: e.ban, jpNome: e.jp_nome, ptNome: e.pt_nome,
+        setor: e.setor, cargo: e.cargo || 'operador'
+    }));
+    _registros = (regsR.data || []).map(r => ({
+        id: r.id, ban: r.ban, jpNome: r.jp_nome, ptNome: r.pt_nome,
+        date: r.date, time: r.time, topic: r.topic, nendo: r.nendo,
+        dados: r.dados || {}, anexo: r.anexo, anexoType: r.anexo_type,
+        anexoName: r.anexo_name, resp: r.resp
+    }));
+    const mm = { picking:0, furidashi:0, kenzai:0, rappa:0, inpurasu:0, ax02:0 };
+    (metasR.data || []).forEach(m => { mm[m.key] = Number(m.value); });
+    _metas = mm;
+    _anos         = (anosR.data || []).map(a => a.ano);
+    _responsaveis = (respsR.data || []).map(r => ({ id: r.id, nome: r.nome }));
+    _logo         = cfgR.data?.logo_data || '';
+    _patrols = (patsR.data || []).map(p => ({
+        id: p.id, ban: p.ban, jpNome: p.jp_nome, ptNome: p.pt_nome,
+        date: p.date, nendo: p.nendo, topic: p.topic, result: p.result,
+        comentario: p.comentario, isPatrol: true, noScore: p.no_score || false,
+        resp: p.resp
+    }));
+    _liderFbs = (lfsR.data || []).map(f => ({
+        id: f.id, ban: f.ban, nendo: f.nendo,
+        empId: f.emp_id, jpNome: f.jp_nome, ptNome: f.pt_nome,
+        ts: f.ts, topicos: f.topicos || {}
+    }));
+}
+
+// ─── Leader topics ────────────────────────────────────────────────────────────
+const LIDER_TOPICOS = [
+    { key: 'gestao_prod',
+      icon: '📊', pt: 'Gestão de Equipe e Produtividade', ja: 'チームマネジメントと生産性',
+      desc_pt: 'Os pedidos saem no prazo, e sem equipe ociosa ou sobrecarregada.',
+      desc_ja: '納期通りに作業が完了し、チームに無駄や過負荷がない。' },
+    { key: 'seguranca_5s',
+      icon: '🦺', pt: 'Segurança e Organização (5S)', ja: '安全と整理整頓（5S）',
+      desc_pt: 'O ambiente de trabalho é seguro e os materiais estão devidamente estocados, organizados e Limpos.',
+      desc_ja: '作業環境が安全で、材料が適切に保管・整理・清潔に保たれている。' },
+    { key: 'comunicacao',
+      icon: '💬', pt: 'Comunicação e Instrução Técnica', ja: 'コミュニケーションと技術指導',
+      desc_pt: 'Sabe explicar as ordens e as prioridades do dia de forma que ninguém tenha dúvidas.',
+      desc_ja: '当日の指示や優先順位を誰もが理解できるよう明確に説明できる。' },
+    { key: 'conflitos',
+      icon: '🤝', pt: 'Gestão de Conflitos e Postura', ja: '問題解決と態度',
+      desc_pt: 'O líder mantém a calma, resolve problemas internos entre funcionários com respeito, sem perder a autoridade.',
+      desc_ja: '冷静さを保ち、スタッフ間の問題を敬意を持って、権威を失わずに解決する。' },
+    { key: 'formacao',
+      icon: '⭐', pt: 'Formação e Exemplo', ja: '育成と模範',
+      desc_pt: 'Segue as regras da empresa e se torna exemplo para o grupo.',
+      desc_ja: '会社のルールを守り、グループの模範となっている。' },
+];
+
+// ─── Language ────────────────────────────────────────────────────────────────
+function toggleLanguage() {
+    currentLang = currentLang === 'ja' ? 'pt' : 'ja';
+    localStorage.setItem('lang26', currentLang);
+    applyLanguage();
+    populateAllEmpSelects();
+    populateYearSelects();   // re-label year options (年度 ↔ Ano)
+    initDatePickers();       // re-label novoYear (年 ↔ plain number)
+    populateRespSelects();
+    showTopicFields();
+    Object.keys(TOPICS).forEach(t => renderTopicList(t));
+    renderAvaliacao();
+    renderEmpList();
+    renderLideres();
+    renderPatrolList();
+    renderAnosFiscais();     // re-render config year list labels
+    renderResponsaveis();
+}
+
+function applyLanguage() {
+    const ja = currentLang === 'ja';
+    document.querySelectorAll('[data-ja]').forEach(el => {
+        if (!el.children.length) {
+            el.textContent = ja ? el.getAttribute('data-ja') : el.getAttribute('data-pt');
+        }
+    });
+    // Handle placeholder translations
+    document.querySelectorAll('[data-ja-ph]').forEach(el => {
+        el.placeholder = ja ? el.getAttribute('data-ja-ph') : el.getAttribute('data-pt-ph');
+    });
+}
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(e) {
+    const id = e.target.getAttribute('data-tab');
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    e.target.classList.add('active');
+
+    const topicMap = {
+        'tab-seguranca':'seguranca', 'tab-qualidade':'qualidade', 'tab-cooperacao':'cooperacao',
+        'tab-moral':'moral', 'tab-produtividade':'produtividade', 'tab-presenca':'presenca',
+    };
+    if (topicMap[id]) renderTopicList(topicMap[id]);
+    else if (id === 'tab-avaliacao') renderAvaliacao();
+    else if (id === 'tab-patrol')    renderPatrolList();
+    else if (id === 'tab-lideres')   renderLideres();
+    else if (id === 'tab-config')    { renderEmpList(); renderAnosFiscais(); renderResponsaveis(); renderLogoPreview(); }
+}
+
+// ─── Fiscal year from date ───────────────────────────────────────────────────
+function calcNendo(dateStr) {
+    if (!dateStr) return '26';
+    const d = new Date(dateStr);
+    const yr = d.getFullYear();
+    const mo = d.getMonth() + 1; // 1-12
+    // Fiscal year ends March; "26年度" = Apr 2025–Mar 2026
+    return mo >= 4 ? String(yr + 1).slice(-2) : String(yr).slice(-2);
+}
+
+// ─── FORM: Topic fields (dynamic) ────────────────────────────────────────────
+function showTopicFields() {
+    const topic = document.getElementById('novoTopic').value;
+    const box   = document.getElementById('topicFields');
+    if (!topic) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+    box.classList.remove('hidden');
+    const ja = currentLang === 'ja';
+
+    // "Sem pontuação" checkbox — reused by all topic templates
+    const noScoreBlock = `
+        <div class="form-group" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#475569;font-size:13px;font-weight:600;">
+                <input type="checkbox" id="tf-no-score" onchange="toggleNoScore()">
+                📋 ${ja?'採点なし（記録のみ）':'Sem pontuação (apenas registro)'}
+            </label>
+        </div>`;
+
+    const templates = {
+        seguranca: () => `
+            <div class="topic-field-label">🔒 ${ja?'安全 — 詳細':'Segurança — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="form-group">
+                <label>${ja?'評価':'Resultado'}</label>
+                <select id="tf-result" onchange="toggleNegativeFields()">
+                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
+                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
+                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                </select>
+            </div>
+
+            <div id="tf-positive-comment">
+                <div class="form-group">
+                    <label>${ja?'コメント':'Comentário'}</label>
+                    <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o ponto positivo'}"></textarea>
+                </div>
+            </div>
+            <div id="tf-negative-details" class="hidden">
+                <div class="form-group">
+                    <label>📋 ${ja?'発生内容':'Ocorrido'}</label>
+                    <textarea id="tf-ocorrido" rows="3" placeholder="${ja?'何が起きたかを記述してください':'Descreva o que aconteceu'}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>❓ ${ja?'原因':'Motivo'}</label>
+                    <textarea id="tf-motivo" rows="3" placeholder="${ja?'原因を記述してください':'Descreva o motivo / causa'}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>💬 ${ja?'従業員のコメント':'Comentário do Funcionário'}</label>
+                    <textarea id="tf-comentario-func" rows="3" placeholder="${ja?'従業員の見解・弁明を記述':'O que o funcionário disse sobre o ocorrido'}"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+
+        qualidade: () => `
+            <div class="topic-field-label">✅ ${ja?'品質 — 詳細':'Qualidade — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="form-group">
+                <label>${ja?'評価':'Resultado'}</label>
+                <select id="tf-result" onchange="toggleNegativeFields()">
+                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
+                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
+                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                </select>
+            </div>
+
+            <div id="tf-positive-comment">
+                <div class="form-group">
+                    <label>${ja?'コメント':'Comentário'}</label>
+                    <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o ponto positivo'}"></textarea>
+                </div>
+            </div>
+            <div id="tf-negative-details" class="hidden">
+                <div class="form-group">
+                    <label>📋 ${ja?'発生内容':'Ocorrido'}</label>
+                    <textarea id="tf-ocorrido" rows="3" placeholder="${ja?'何が起きたかを記述してください':'Descreva o que aconteceu'}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>❓ ${ja?'原因':'Motivo'}</label>
+                    <textarea id="tf-motivo" rows="3" placeholder="${ja?'原因を記述してください':'Descreva o motivo / causa'}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>💬 ${ja?'従業員のコメント':'Comentário do Funcionário'}</label>
+                    <textarea id="tf-comentario-func" rows="3" placeholder="${ja?'従業員の見解・弁明を記述':'O que o funcionário disse sobre o ocorrido'}"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+
+        cooperacao: () => `
+            <div class="topic-field-label">🤝 ${ja?'協力 — 詳細':'Cooperação — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="form-group">
+                <label>${ja?'評価':'Avaliação'}</label>
+                <select id="tf-result" onchange="toggleNegativeFields()">
+                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
+                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
+                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>${ja?'コメント':'Comentário'}</label>
+                <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o comportamento observado'}"></textarea>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+
+        moral: () => `
+            <div class="topic-field-label">💡 ${ja?'モラル — 詳細':'Moral — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="form-group">
+                <label>${ja?'評価':'Avaliação'}</label>
+                <select id="tf-result" onchange="toggleNegativeFields()">
+                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
+                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
+                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>${ja?'コメント':'Comentário'}</label>
+                <textarea id="tf-comentario" placeholder="${ja?'詳細を記述してください':'Descreva o comportamento observado'}"></textarea>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+
+        produtividade: () => `
+            <div class="topic-field-label">📈 ${ja?'生産性 — 詳細':'Produtividade — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>${ja?'サービス':'Serviço'}</label>
+                    <select id="tf-servico" onchange="updateProdFields()">
+                        <option value="picking">${ja?'ピッキング作業':'Picking'}</option>
+                        <option value="furidashi">${ja?'振り出し作業':'Furidashi'}</option>
+                        <option value="kenzai">${ja?'建材バーコード検品':'Kenzai BarCode'}</option>
+                        <option value="rappa">${ja?'ラップ巻き':'Rappu Maki'}</option>
+                        <option value="inpurasu">${ja?'インプラス仕分':'Separacao de Vidros'}</option>
+                        <option value="ax02">${ja?'AX02ながら検品':'AX02 Nagara Kenpin'}</option>
+                        <option value="geral">${ja?'全般':'Geral'}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>${ja?'生産性（数値）':'Valor de Produtividade'}</label>
+                    <input type="number" id="tf-media" placeholder="${ja?'例: 150':'Ex: 150'}" min="0" step="0.1" oninput="updateProdFields()">
+                </div>
+            </div>
+            <div style="padding:10px 14px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;margin-bottom:12px;font-size:13px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <span><strong>${ja?'目標 (Meta)':'Meta'}:</strong> <span id="tf-meta-value" style="font-weight:700;color:#15803d;">—</span></span>
+                <span id="tf-prod-result-label" style="font-weight:700;color:#888;">—</span>
+            </div>
+
+            <div class="form-group">
+                <label>${ja?'コメント':'Comentário'}</label>
+                <textarea id="tf-comentario" placeholder="${ja?'コメントを追加':'Adicione um comentário'}"></textarea>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+
+        presenca: () => `
+            <div class="topic-field-label">📅 ${ja?'出勤 — 詳細':'Presença — Detalhes'}</div>
+            ${noScoreBlock}
+            <div class="form-group">
+                <label>${ja?'評価':'Avaliação'}</label>
+                <select id="tf-result" onchange="toggleNegativeFields()">
+                    <option value="positivo">✅ ${ja?'ポジティブ':'Positivo'}</option>
+                    <option value="atencao">⚠️ ${ja?'注意':'Atenção'}</option>
+                    <option value="negativo">❌ ${ja?'ネガティブ':'Negativo'}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>${ja?'種類（任意）':'Tipo (opcional)'}</label>
+                <select id="tf-tipo">
+                    <option value="">${ja?'選択（任意）':'Selecione (opcional)'}</option>
+                    <option value="pontual">⏰ ${ja?'時間通り':'Pontual'}</option>
+                    <option value="atraso">⚠️ ${ja?'遅刻':'Atraso'}</option>
+                    <option value="falta_just">📋 ${ja?'公欠':'Falta Justificada'}</option>
+                    <option value="falta_nao">❌ ${ja?'無断欠席':'Falta Não Justificada'}</option>
+                    <option value="hora_extra">⭐ ${ja?'残業':'Hora Extra'}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>${ja?'コメント':'Comentário'}</label>
+                <textarea id="tf-comentario" placeholder="${ja?'コメントを追加':'Adicione um comentário'}"></textarea>
+            </div>
+            <div class="form-group">
+                <label>${ja?'添付ファイル（任意）':'Anexo (opcional)'}</label>
+                <input type="file" id="tf-anexo" accept="image/*,video/*,.pdf,.xlsx,.xls">
+            </div>`,
+    };
+
+    box.innerHTML = (templates[topic] || (() => ''))();
+}
+
+function toggleNegativeFields() {
+    const noScore = document.getElementById('tf-no-score')?.checked;
+    const result  = document.getElementById('tf-result')?.value;
+    const isNeg   = !noScore && result === 'negativo';
+    const posDiv  = document.getElementById('tf-positive-comment');
+    const negDiv  = document.getElementById('tf-negative-details');
+    if (posDiv) posDiv.classList.toggle('hidden',  isNeg);
+    if (negDiv) negDiv.classList.toggle('hidden',  !isNeg);
+}
+
+function toggleNoScore() {
+    const noScore  = document.getElementById('tf-no-score')?.checked;
+    const posDiv   = document.getElementById('tf-positive-comment');
+    const negDiv   = document.getElementById('tf-negative-details');
+    // When sem pontuação is checked, hide negative details but keep comment visible
+    if (noScore) {
+        if (posDiv) posDiv.classList.remove('hidden'); // always show comment
+        if (negDiv) negDiv.classList.add('hidden');
+    } else {
+        // Re-run normal toggle based on current result value
+        toggleNegativeFields();
+    }
+}
+
+// ─── Date mode helpers ───────────────────────────────────────────────────────
+function initDatePickers() {
+    const yearSel = document.getElementById('novoYear');
+    if (!yearSel) return;
+    const ja  = currentLang === 'ja';
+    const now = new Date();
+    const cur = now.getFullYear();
+    const anos = getAnos().sort((a,b) => parseInt(a)-parseInt(b));
+
+    // Build the set of calendar years valid for each configured nendo.
+    // calcNendo: mo>=4 → nendo = yr+1 suffix.
+    // So nendo "26" = April 2025 – March 2026 → calendar years 2025 (full-1) and 2026 (full).
+    const yearSet = new Set();
+    anos.forEach(a => {
+        const full = 2000 + parseInt(a);
+        yearSet.add(full - 1);   // April–December of (full-1) → nendo a
+        yearSet.add(full);       // January–March  of full     → nendo a
+    });
+    // Fallback if no nendos are configured yet
+    if (yearSet.size === 0) {
+        for (let y = cur - 1; y <= cur + 1; y++) yearSet.add(y);
+    }
+
+    yearSel.innerHTML = '';
+    [...yearSet].sort((a,b) => a-b).forEach(y => {
+        const o = document.createElement('option');
+        o.value = String(y);
+        o.textContent = ja ? `${y}年` : String(y);
+        if (y === cur) o.selected = true;
+        yearSel.appendChild(o);
+    });
+    // If current year is not in the set, select the last available year
+    if (![...yearSel.options].some(o => o.selected)) {
+        yearSel.options[yearSel.options.length - 1].selected = true;
+    }
+
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const ms = document.getElementById('novoMonth');
+    if (ms) ms.value = m;
+    const fd = document.getElementById('novoDateFull');
+    if (fd) fd.value = now.toISOString().split('T')[0];
+    syncMonthDate();
+}
+
+function toggleTimeField() {
+    const checked = document.getElementById('novoTimeCheck')?.checked;
+    const input   = document.getElementById('novoTime');
+    if (!input) return;
+    input.classList.toggle('hidden', !checked);
+    if (!checked) input.value = '';
+}
+
+function toggleDateMode() {
+    const mode = document.querySelector('input[name="dateMode"]:checked')?.value || 'month';
+    const monthDiv = document.getElementById('date-month-mode');
+    const fullDiv  = document.getElementById('date-full-mode');
+    if (monthDiv) monthDiv.style.display = mode === 'month' ? 'flex' : 'none';
+    if (fullDiv)  fullDiv.style.display  = mode === 'full'  ? 'block' : 'none';
+    if (mode === 'month') syncMonthDate(); else syncFullDate();
+}
+
+function syncMonthDate() {
+    const y = document.getElementById('novoYear')?.value  || '';
+    const m = document.getElementById('novoMonth')?.value || '';
+    const h = document.getElementById('novoDate');
+    if (h && y && m) h.value = `${y}-${m}`;
+}
+
+function syncFullDate() {
+    const v = document.getElementById('novoDateFull')?.value || '';
+    const h = document.getElementById('novoDate');
+    if (h) h.value = v;
+}
+
+// ─── Produtividade: auto positive/negative from value vs meta ─────────────────
+function updateProdFields() {
+    const svc   = document.getElementById('tf-servico')?.value || 'geral';
+    const val   = parseFloat(document.getElementById('tf-media')?.value);
+    const meta  = getMetas()[svc] || 0;
+    const ja    = currentLang === 'ja';
+
+    const metaEl  = document.getElementById('tf-meta-value');
+    const labelEl = document.getElementById('tf-prod-result-label');
+
+    if (metaEl) metaEl.textContent = meta > 0 ? meta : (ja ? '未設定' : 'Não definida');
+
+    if (!isNaN(val) && meta > 0) {
+        if (labelEl) {
+            if (val > meta + 10) {
+                labelEl.textContent = `✅ ${ja ? '目標大幅超過 — ポジティブ' : 'Acima da meta (+10) — Positivo'}`;
+                labelEl.style.color = '#16a34a';
+            } else if (val >= meta - 5) {
+                labelEl.textContent = `➡️ ${ja ? '目標付近 — 注意' : 'Próximo da meta — Atenção'}`;
+                labelEl.style.color = '#888';
+            } else {
+                labelEl.textContent = `⚠️ ${ja ? '目標大幅未達 — 注意' : 'Abaixo da meta (-5) — Atenção'}`;
+                labelEl.style.color = '#d97706';
+            }
+        }
+    } else {
+        if (labelEl) {
+            labelEl.textContent = meta === 0 ? (ja ? '⚠️ 先に目標を設定してください' : '⚠️ Defina a meta na aba Produtividade') : '—';
+            labelEl.style.color = '#888';
+        }
+    }
+}
+
+// ─── Save record ─────────────────────────────────────────────────────────────
+async function saveRecord() {
+    // Force-sync the hidden date field in case onchange wasn't triggered
+    const dateMode = document.querySelector('input[name="dateMode"]:checked')?.value || 'month';
+    if (dateMode === 'month') syncMonthDate(); else syncFullDate();
+
+    const empId = document.getElementById('novoEmp').value;
+    const topic = document.getElementById('novoTopic').value;
+    const date  = document.getElementById('novoDate').value;
+    const time  = document.getElementById('novoTime').value;
+
+    if (!empId) { alert(currentLang==='ja'?'社員を選択してください':'Selecione um funcionário'); return; }
+    if (!topic) { alert(currentLang==='ja'?'トピックを選択してください':'Selecione um tópico'); return; }
+    if (!date)  { alert(currentLang==='ja'?'日付を入力してください':'Informe a data'); return; }
+
+    const emp = getEmployees().find(e => e.id == empId);
+    if (!emp) return;
+
+    const nendo = calcNendo(date);
+
+    // Collect topic-specific data
+    const dados = {};
+    const noScore = document.getElementById('tf-no-score')?.checked || false;
+    if (noScore) dados.noScore = true;
+
+    if (['seguranca','qualidade'].includes(topic)) {
+        dados.result = document.getElementById('tf-result')?.value || 'positivo';
+        if (!noScore && dados.result === 'negativo') {
+            dados.ocorrido       = document.getElementById('tf-ocorrido')?.value.trim()        || '';
+            dados.motivo         = document.getElementById('tf-motivo')?.value.trim()          || '';
+            dados.comentarioFunc = document.getElementById('tf-comentario-func')?.value.trim() || '';
+        } else {
+            dados.comentario = document.getElementById('tf-comentario')?.value.trim() || '';
+        }
+    } else if (['cooperacao','moral'].includes(topic)) {
+        dados.result     = document.getElementById('tf-result')?.value || 'positivo';
+        dados.comentario = document.getElementById('tf-comentario')?.value || '';
+    } else if (topic === 'produtividade') {
+        const svc  = document.getElementById('tf-servico')?.value || 'geral';
+        const val  = parseFloat(document.getElementById('tf-media')?.value) || 0;
+        const meta = getMetas()[svc] || 0;
+        let perf, result;
+        if (val > 0 && meta > 0) {
+            if (val > meta + 10)      { perf = 'acima';   result = 'positivo'; }
+            else if (val >= meta)     { perf = 'media';   result = 'atencao';  }
+            else if (val >= meta - 5) { perf = 'proximo'; result = 'atencao';  }
+            else                      { perf = 'abaixo';  result = 'atencao';  }
+        } else {
+            perf = 'media'; result = 'atencao';
+        }
+        dados.performance = perf;
+        dados.result      = result;
+        dados.servico    = svc;
+        dados.media      = val;
+        dados.comentario = document.getElementById('tf-comentario')?.value || '';
+    } else if (topic === 'presenca') {
+        dados.result     = document.getElementById('tf-result')?.value || 'positivo';
+        dados.tipo       = document.getElementById('tf-tipo')?.value   || '';
+        dados.comentario = document.getElementById('tf-comentario')?.value || '';
+    }
+
+    // Attachment: image, video, PDF or Excel
+    let anexo = null, anexoType = null, anexoName = null;
+    const fileEl = document.getElementById('tf-anexo');
+    if (fileEl && fileEl.files[0]) {
+        const f = fileEl.files[0];
+        anexoName = f.name;
+        const isVideo = f.type.startsWith('video/');
+        const isPdf   = f.type === 'application/pdf';
+        const isExcel = f.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                     || f.type === 'application/vnd.ms-excel'
+                     || f.name.match(/\.xlsx?$/i);
+        if (isVideo) {
+            // Videos can be large — warn if >20MB
+            if (f.size > 20 * 1024 * 1024) {
+                const ja3 = currentLang === 'ja';
+                const ok = confirm(ja3
+                    ? `⚠️ ファイルサイズが大きいです（${(f.size/1024/1024).toFixed(1)}MB）。\n保存できない場合があります。続けますか？`
+                    : `⚠️ Arquivo grande (${(f.size/1024/1024).toFixed(1)}MB).\nPode falhar ao salvar. Continuar?`);
+                if (!ok) return;
+            }
+            anexo = await new Promise(r => { const fr = new FileReader(); fr.onload = e2 => r(e2.target.result); fr.readAsDataURL(f); });
+            anexoType = 'video';
+        } else if (isPdf) {
+            anexo = await new Promise(r => { const fr = new FileReader(); fr.onload = e2 => r(e2.target.result); fr.readAsDataURL(f); });
+            anexoType = 'pdf';
+        } else if (isExcel) {
+            anexo = await new Promise(r => { const fr = new FileReader(); fr.onload = e2 => r(e2.target.result); fr.readAsDataURL(f); });
+            anexoType = 'excel';
+        } else {
+            anexo = await compressImage(f);
+            anexoType = 'image';
+        }
+    }
+
+    const respNome = document.getElementById('novoResp')?.value || '';
+
+    const record = {
+        id: Date.now(),
+        ban: emp.ban, jpNome: emp.jpNome, ptNome: emp.ptNome,
+        date, time, topic, nendo, dados, anexo, anexoType, anexoName,
+        resp: respNome,
+    };
+
+    const ja2 = currentLang === 'ja';
+    try {
+        const { error } = await sb.from('registros').insert([{
+            id: record.id, ban: record.ban, jp_nome: record.jpNome, pt_nome: record.ptNome,
+            date: record.date, time: record.time, topic: record.topic, nendo: record.nendo,
+            dados: record.dados, anexo: record.anexo, anexo_type: record.anexoType,
+            anexo_name: record.anexoName, resp: record.resp
+        }]);
+        if (error) throw error;
+        _registros.push(record);
+    } catch (e) {
+        alert(ja2 ? '⚠️ 保存中にエラーが発生しました: ' + e.message : '⚠️ Erro ao salvar: ' + e.message);
+        return;
+    }
+
+    clearNovoForm();
+    try { renderAvaliacao(); } catch(_e) {} // update chart live; ignore errors so alert always fires
+
+    alert(ja2 ? '✅ 保存しました' : '✅ Salvo com sucesso!');
+}
+
+function clearNovoForm() {
+    document.getElementById('novoEmp').value   = '';
+    document.getElementById('novoTopic').value = '';
+    const respEl = document.getElementById('novoResp');
+    if (respEl) respEl.value = '';
+    const tc = document.getElementById('novoTimeCheck');
+    const ti = document.getElementById('novoTime');
+    if (tc) tc.checked = false;
+    if (ti) { ti.value = ''; ti.classList.add('hidden'); }
+    initDatePickers();
+    const tf = document.getElementById('topicFields');
+    tf.innerHTML = '';
+    tf.classList.add('hidden');
+}
+
+async function compressImage(file) {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const max = 700;
+                const ratio = Math.min(max / img.width, max / img.height, 1);
+                canvas.width  = Math.round(img.width  * ratio);
+                canvas.height = Math.round(img.height * ratio);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.65));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// ─── Topic list rendering ────────────────────────────────────────────────────
+function renderTopicList(topic) {
+    updateTopicEmpFilter(topic);
+    const tf = TOPIC_FILTERS[topic];
+    const year   = document.getElementById(tf.year)?.value || '26';
+    const empBan = document.getElementById(tf.emp)?.value  || '';
+    const container = document.getElementById('list-' + topic);
+    if (!container) return;
+
+    let recs = getRegistros().filter(r => r.topic === topic && r.nendo === year);
+    if (empBan) recs = recs.filter(r => r.ban === empBan);
+    recs.sort((a,b) => (b.date+b.time) > (a.date+a.time) ? 1 : -1);
+
+    if (topic === 'produtividade') {
+        renderProdutividadeTab(container, recs);
+        return;
+    }
+
+    if (!recs.length) {
+        container.innerHTML = `<div class="empty-msg">📭 ${currentLang==='ja'?'まだ記録がありません':'Nenhum registro encontrado'}</div>`;
+        return;
+    }
+    container.innerHTML = recs.map(r => buildRecordCard(r)).join('');
+}
+
+// ─── Produtividade tab: 3 service cards + records ─────────────────────────────
+function renderProdutividadeTab(container, recs) {
+    const ja    = currentLang === 'ja';
+    const metas = getMetas();
+
+    const SERVICES = [
+        { key: 'picking',   label: 'Picking',           labelJa: 'ピッキング作業',    cls: 'picking'   },
+        { key: 'furidashi', label: 'Furidashi',          labelJa: '振り出し作業',      cls: 'furidashi' },
+        { key: 'kenzai',    label: 'Kenzai BarCode',     labelJa: '建材バーコード検品', cls: 'kenzai'    },
+        { key: 'rappa',     label: 'Rappu Maki',         labelJa: 'ラップ巻き',        cls: 'rappa'     },
+        { key: 'inpurasu',  label: 'Separacao de Vidros',labelJa: 'インプラス仕分',    cls: 'inpurasu'  },
+        { key: 'ax02',      label: 'AX02 Nagara Kenpin', labelJa: 'AX02ながら検品',    cls: 'ax02'      },
+    ];
+
+    function svcAvg(key) {
+        const vals = recs.filter(r => r.dados?.servico === key)
+                         .map(r => r.dados?.media || 0).filter(v => v > 0);
+        return vals.length ? (vals.reduce((a,b) => a+b, 0) / vals.length) : null;
+    }
+    function svcCount(key) { return recs.filter(r => r.dados?.servico === key).length; }
+
+    const cards = SERVICES.map(s => {
+        const avg     = svcAvg(s.key);
+        const meta    = metas[s.key] || 0;
+        const avgVal  = avg !== null ? avg : 0;
+        const pct     = meta > 0 ? Math.min(100, Math.round(avgVal / meta * 100)) : null;
+        const avgDisp = avg !== null ? avg.toFixed(1) : '—';
+
+        return `
+        <div class="svc-card ${s.cls}">
+            <span class="svc-count">${svcCount(s.key)} ${ja?'件':'reg.'}</span>
+            <h3>${ja ? s.labelJa : s.label}</h3>
+            <div class="svc-avg">${avgDisp}</div>
+            <div class="svc-avg-lbl">${ja?'平均生産性':'Média de produtividade'}</div>
+            ${meta > 0 ? `
+                <div class="svc-progress-bar"><div class="svc-progress-fill" style="width:${pct}%"></div></div>
+                <div class="svc-pct">${pct}% ${ja?'達成 (目標:':'atingido (meta:'} ${meta})</div>` : ''}
+            <div class="svc-meta-row">
+                <label>${ja?'目標':'Meta'}:</label>
+                <input class="svc-meta-input" type="number" id="meta-${s.key}" value="${meta||''}" placeholder="—" min="0" step="1">
+                <button class="svc-save-btn" onclick="saveMeta('${s.key}')">💾</button>
+            </div>
+        </div>`;
+    }).join('');
+
+    const listHtml = recs.length
+        ? recs.map(r => buildRecordCard(r)).join('')
+        : `<div class="empty-msg">📭 ${ja?'まだ記録がありません':'Nenhum registro encontrado'}</div>`;
+
+    container.innerHTML = `
+        <div class="svc-grid">${cards}</div>
+        <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:10px;">
+            📋 ${ja?'詳細記録':'Registros detalhados'} (${recs.length})
+        </div>
+        ${listHtml}`;
+}
+
+async function saveMeta(svc) {
+    const val = parseFloat(document.getElementById('meta-' + svc)?.value) || 0;
+    _metas[svc] = val;
+    await sb.from('metas').upsert({ key: svc, value: val });
+    renderTopicList('produtividade');
+}
+
+// ─── Record card HTML ─────────────────────────────────────────────────────────
+function buildRecordCard(r) {
+    const ja      = currentLang === 'ja';
+    const empName = ja ? r.jpNome : r.ptNome;
+    const timeStr = r.time ? ` ${r.time}` : '';
+    const d       = r.dados || {};
+
+    let detailHtml = '';
+
+    const noScoreBadge  = `<span class="badge b-neutral">📋 ${ja?'採点なし':'Sem Pontuação'}</span>`;
+    const posBadge      = `<span class="badge b-pos">✅ ${ja?'ポジティブ':'Positivo'}</span>`;
+    const negBadge      = `<span class="badge b-neg">❌ ${ja?'ネガティブ':'Negativo'}</span>`;
+    const atencaoBadge  = `<span class="badge b-warn">⚠️ ${ja?'注意':'Atenção'}</span>`;
+    function resultBadgeFor(dados) {
+        if (dados.noScore)              return noScoreBadge;
+        if (dados.result === 'negativo') return negBadge;
+        if (dados.result === 'atencao')  return atencaoBadge;
+        return posBadge;
+    }
+    if (r.topic === 'seguranca' || r.topic === 'qualidade') {
+        const isNeg = !d.noScore && d.result === 'negativo';
+        detailHtml = `
+            <div class="record-field">${resultBadgeFor(d)}</div>
+            ${isNeg ? `
+                ${d.ocorrido       ? `<div class="record-field"><strong>${ja?'発生内容':'Ocorrido'}:</strong> ${esc(d.ocorrido)}</div>` : ''}
+                ${d.motivo         ? `<div class="record-field"><strong>${ja?'原因':'Motivo'}:</strong> ${esc(d.motivo)}</div>` : ''}
+                ${d.comentarioFunc ? `<div class="record-field"><strong>${ja?'従業員コメント':'Coment. Funcionário'}:</strong> ${esc(d.comentarioFunc)}</div>` : ''}
+            ` : `
+                ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}
+            `}`;
+
+    } else if (r.topic === 'cooperacao' || r.topic === 'moral') {
+        detailHtml = `
+            <div class="record-field">${resultBadgeFor(d)}</div>
+            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+
+    } else if (r.topic === 'produtividade') {
+        const perfLabels = {
+            acima:   { label: ja?'🚀 目標大幅超過':'🚀 Acima da meta (+10)',  cls:'b-perf-up'  },
+            media:   { label: ja?'➡️ 目標付近':'➡️ Na faixa da meta',        cls:'b-perf-mid' },
+            proximo: { label: ja?'➡️ 目標近く':'➡️ Próximo da meta (-5)',    cls:'b-perf-mid' },
+            abaixo:  { label: ja?'⚠️ 目標大幅未達':'⚠️ Abaixo da meta (-5)', cls:'b-perf-dn'  },
+        };
+        const perf = perfLabels[d.performance] || perfLabels['media'];
+        const svcLabel = { picking: ja?'ピッキング作業':'Picking', furidashi: ja?'振り出し作業':'Furidashi', kenzai: ja?'建材バーコード検品':'Kenzai BarCode', rappa: ja?'ラップ巻き':'Rappu Maki', inpurasu: ja?'インプラス仕分':'Separacao de Vidros', ax02: ja?'AX02ながら検品':'AX02 Nagara Kenpin', geral: ja?'全般':'Geral' };
+        detailHtml = `
+            <div class="record-field">
+                <span class="badge ${perf.cls}">${perf.label}</span>
+                &nbsp;<span class="badge b-neutral">${svcLabel[d.servico]||d.servico||'—'}</span>
+                ${d.media ? `&nbsp;<span style="font-weight:700;color:#8b5cf6;">${d.media}</span>` : ''}
+                ${d.noScore ? `&nbsp;${noScoreBadge}` : ''}
+            </div>
+            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+
+    } else if (r.topic === 'presenca') {
+        const tipoMap = {
+            pontual:    `⏰ ${ja?'時間通り':'Pontual'}`,
+            atraso:     `⚠️ ${ja?'遅刻':'Atraso'}`,
+            falta_just: `📋 ${ja?'公欠':'Falta Justificada'}`,
+            falta_nao:  `❌ ${ja?'無断欠席':'Falta Não Justificada'}`,
+            hora_extra: `⭐ ${ja?'残業':'Hora Extra'}`,
+        };
+        detailHtml = `
+            <div class="record-field">
+                ${resultBadgeFor(d)}
+                ${d.tipo ? `&nbsp;<span class="badge b-neutral">${tipoMap[d.tipo]||d.tipo}</span>` : ''}
+            </div>
+            ${d.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(d.comentario)}</div>` : ''}`;
+    }
+
+    let attachHtml = '';
+    if (r.anexo) {
+        const fname = r.anexoName ? esc(r.anexoName) : '';
+        if (r.anexoType === 'image') {
+            attachHtml = `<div style="margin-top:10px;"><img src="${r.anexo}" style="max-width:160px;max-height:110px;border-radius:6px;cursor:pointer;border:1px solid #ddd;" onclick="openImageModal(${r.id})"></div>`;
+        } else if (r.anexoType === 'video') {
+            attachHtml = `<div style="margin-top:10px;"><video src="${r.anexo}" controls style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid #ddd;"></video>${fname ? `<div style="font-size:11px;color:#888;margin-top:4px;">🎥 ${fname}</div>` : ''}</div>`;
+        } else if (r.anexoType === 'pdf') {
+            attachHtml = `<div style="margin-top:10px;"><a href="${r.anexo}" target="_blank" class="badge b-neutral" style="text-decoration:none;">📄 ${fname || 'PDF'}</a></div>`;
+        } else if (r.anexoType === 'excel') {
+            attachHtml = `<div style="margin-top:10px;"><a href="${r.anexo}" download="${fname || 'arquivo.xlsx'}" class="badge b-neutral" style="text-decoration:none;">📊 ${fname || 'Excel'}</a></div>`;
+        }
+    }
+
+    return `
+    <div class="record-item t-${r.topic}">
+        <div class="record-top">
+            <div class="record-meta">
+                <span class="r-date">📅 ${r.date}${timeStr}</span>
+                <span class="r-emp">👤 ${esc(empName)}</span>
+                <span class="r-ban">${r.ban}</span>
+                ${r.resp ? `<span class="badge b-neutral" style="font-size:11px;">🧑‍💼 ${esc(r.resp)}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;">
+                ${(r.topic === 'seguranca' || r.topic === 'qualidade') ? `<button class="btn-secondary btn-sm" onclick="printSegQualRecord(${r.id})">📄 PDF</button>` : ''}
+                <button class="btn-danger btn-sm" onclick="deleteRecord(${r.id}, '${r.topic}')">🗑️</button>
+            </div>
+        </div>
+        <div class="record-body">${detailHtml}${attachHtml}</div>
+    </div>`;
+}
+
+function printSegQualRecord(id) {
+    const r  = getRegistros().find(x => x.id === id);
+    if (!r) return;
+    const ja      = currentLang === 'ja';
+    const empName = ja ? r.jpNome : r.ptNome;
+    const d       = r.dados || {};
+    const isNeg   = d.result === 'negativo';
+    const topicLabel = r.topic === 'seguranca' ? (ja ? '🔒 安全' : '🔒 Segurança') : (ja ? '✅ 品質' : '✅ Qualidade');
+
+    const detailRows = isNeg ? `
+        ${d.ocorrido ? `<div class="row"><span class="lbl">${ja?'発生内容':'Ocorrido'}:</span><span class="val">${d.ocorrido.replace(/\n/g,'<br>')}</span></div>` : ''}
+        ${d.motivo   ? `<div class="row"><span class="lbl">${ja?'原因':'Motivo'}:</span><span class="val">${d.motivo.replace(/\n/g,'<br>')}</span></div>` : ''}
+        ${d.comentarioFunc ? `<div class="row"><span class="lbl">${ja?'従業員コメント':'Coment. Funcionário'}:</span><span class="val">${d.comentarioFunc.replace(/\n/g,'<br>')}</span></div>` : ''}
+    ` : `
+        ${d.comentario ? `<div class="row"><span class="lbl">${ja?'コメント':'Comentário'}:</span><span class="val">${d.comentario.replace(/\n/g,'<br>')}</span></div>` : ''}
+    `;
+
+    const attachHtml = r.anexo && r.anexoType === 'image'
+        ? `<div style="margin-top:20px;text-align:center;"><img src="${r.anexo}" style="max-width:100%;max-height:300px;border-radius:6px;border:1px solid #ddd;"></div>` : '';
+
+    const _storedLogo = getLogo();
+    const logoTag = _storedLogo
+        ? `<img src="${_storedLogo}" style="height:48px;object-fit:contain;">`
+        : `<img src="LOGO%203.gif" style="height:48px;object-fit:contain;" onerror="this.style.display='none'">`;
+
+    const html = `<!DOCTYPE html>
+<html lang="${ja?'ja':'pt-BR'}">
+<head>
+    <meta charset="UTF-8">
+    <title>${topicLabel} — ${empName}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Hiragino Sans',sans-serif; padding:32px 40px; color:#1a1a2e; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:3px solid #1a365d; margin-bottom:20px; }
+        .header h1 { font-size:20px; font-weight:700; color:#1a365d; }
+        .header .sub { font-size:13px; color:#555; margin-top:4px; }
+        .meta-box { background:#f4f7fb; border-radius:8px; padding:14px 18px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:14px; }
+        .meta-box .item { font-size:13px; } .meta-box .item strong { color:#1a365d; }
+        .badge { display:inline-block; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:700; }
+        .b-neg  { background:#fee2e2; color:#7f1d1d; }
+        .b-pos  { background:#dbeafe; color:#1e3a8a; }
+        .section { margin-bottom:12px; }
+        .row { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+        .lbl { font-weight:700; color:#374151; font-size:13px; min-width:160px; flex-shrink:0; }
+        .val { font-size:13px; color:#444; line-height:1.6; flex:1; }
+        .sev { font-weight:700; }
+        @media print { body { padding:20px 28px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>${topicLabel} — ${ja?'記録':'Registro'}</h1>
+            <div class="sub">${ja?'社員評価システム':'Sistema de Avaliação de Funcionários'}</div>
+        </div>
+        ${logoTag}
+    </div>
+    <div class="meta-box">
+        <div class="item">👤 <strong>${ja?'氏名':'Nome'}:</strong> ${empName}</div>
+        <div class="item">🔖 <strong>BAN:</strong> ${r.ban}</div>
+        <div class="item">📅 <strong>${ja?'日付':'Data'}:</strong> ${r.date}${r.time?' '+r.time:''}</div>
+        ${r.resp ? `<div class="item">🧑‍💼 <strong>${ja?'担当者':'Responsável'}:</strong> ${r.resp}</div>` : ''}
+        <div class="item"><span class="badge ${isNeg?'b-neg':'b-pos'}">${isNeg ? (ja?'⚠️ ネガティブ':'⚠️ Negativo') : (ja?'✅ ポジティブ':'✅ Positivo')}</span></div>
+    </div>
+    <div class="section">${detailRows}</div>
+    ${attachHtml}
+</body>
+</html>`;
+
+    // Generate PDF via hidden window + html2canvas
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+        alert(ja ? 'PDFライブラリを読み込み中です。しばらくお待ちください。' : 'Biblioteca PDF ainda carregando. Tente novamente em segundos.');
+        return;
+    }
+    const win = window.open('', '_blank', 'width=820,height=700');
+    const { jsPDF } = jspdf;
+    win.onload = () => {
+        setTimeout(() => {
+            html2canvas(win.document.body, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.88);
+                const pdf  = new jsPDF('p', 'mm', 'a4');
+                const pw   = 210; const ph = 297;
+                const imgW = pw;
+                const imgH = (canvas.height / canvas.width) * pw;
+                let y = 0;
+                while (y < imgH) {
+                    if (y > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, -y, imgW, imgH);
+                    y += ph;
+                }
+                const fname = `registro_${r.topic}_${r.ban}_${r.date}.pdf`;
+                pdf.save(fname);
+                win.close();
+            }).catch(() => { win.close(); alert(ja ? 'PDF生成中にエラーが発生しました。' : 'Erro ao gerar PDF.'); });
+        }, 300);
+    };
+    win.document.write(html);
+    win.document.close();
+}
+
+async function deleteRecord(id, topic) {
+    if (!confirm(currentLang==='ja'?'この記録を削除しますか？':'Excluir este registro?')) return;
+    await sb.from('registros').delete().eq('id', id);
+    _registros = _registros.filter(r => r.id !== id);
+    if (topic) renderTopicList(topic);
+    renderAvaliacao();
+}
+
+function openImageModal(id) {
+    const r = getRegistros().find(x => x.id === id);
+    if (!r?.anexo) return;
+    const o = document.createElement('div');
+    o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out;';
+    o.innerHTML = `<img src="${r.anexo}" style="max-width:92vw;max-height:92vh;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+    <button onclick="this.parentElement.remove()" style="position:fixed;top:18px;right:18px;background:white;border-radius:50%;width:34px;height:34px;font-size:18px;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);">✕</button>`;
+    o.addEventListener('click', e => { if (e.target===o) o.remove(); });
+    document.body.appendChild(o);
+}
+
+function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ─── Avaliação Individual ────────────────────────────────────────────────────
+function renderAvaliacao() {
+    updateAvalEmpFilter();
+    const empId = document.getElementById('aval-emp').value;
+    const year  = document.getElementById('aval-year').value;
+    const box   = document.getElementById('avalContent');
+    if (!empId) { box.innerHTML = ''; return; }
+
+    const emp = getEmployees().find(e => e.id == empId);
+    if (!emp) return;
+    const ja      = currentLang === 'ja';
+    const empName = ja ? emp.jpNome : emp.ptNome;
+    const records = getRegistros().filter(r => r.ban === emp.ban && r.nendo === year);
+
+    // Convert patrol records to virtual records for scoring (segurança + qualidade)
+    const patrolRecs = getPatrols().filter(p => p.ban === emp.ban && p.nendo === year)
+        .map(p => ({
+            id: p.id, ban: p.ban, jpNome: p.jpNome, ptNome: p.ptNome,
+            date: p.date, time: '', topic: p.topic, nendo: p.nendo,
+            dados: {
+                result:     p.result,
+                comentario: p.comentario || '',
+                noScore:    p.noScore || false,
+            },
+            isPatrol: true,
+        }));
+
+    // Overall score: average of all topic scores (base 6.0, max 10)
+    const summariesTemp = {};
+    const scoresTemp    = [];
+    Object.keys(TOPICS).forEach(t => {
+        const recs = [
+            ...records.filter(r => r.topic === t),
+            ...patrolRecs.filter(r => r.topic === t),
+        ];
+        summariesTemp[t] = calcSummary(t, recs, ja);
+        scoresTemp.push(summariesTemp[t].score);
+    });
+    const finalScoreNum = scoresTemp.length
+        ? (scoresTemp.reduce((a,b) => a+b, 0) / scoresTemp.length)
+        : 5.0;
+    const finalScore = finalScoreNum.toFixed(2);
+    const scoreColor = finalScoreNum >= 7.1 ? '#10b981'
+                     : finalScoreNum >= 5.0 ? '#f59e0b'
+                     : finalScoreNum >= 3.0 ? '#ef4444'
+                     :                        '#6b7280';
+
+    // Reuse already-computed summaries and scores
+    const summaries = summariesTemp;
+    const scores    = scoresTemp;
+
+    // Summary boxes
+    const summaryBoxes = Object.entries(TOPICS).map(([key, tp]) => {
+        const s = summaries[key];
+        return `<div class="s-box sb-${key}">
+            <div class="s-icon">${tp.icon}</div>
+            <div class="s-name">${ja ? tp.ja : tp.pt}</div>
+            <div class="s-count">${s.count}</div>
+            <div class="s-detail">${s.detail}</div>
+        </div>`;
+    }).join('');
+
+    // Leader feedbacks for this employee
+    const liderFbs = getLidFeedback()
+        .filter(f => f.empId === emp.id && f.nendo === year)
+        .sort((a, b) => b.ts - a.ts);
+
+    const liderSection = liderFbs.length ? `
+    <div class="card">
+        <h2>👑 ${ja ? 'リーダー評価' : 'Avaliação do Líder'}</h2>
+        ${liderFbs.map(f => buildFeedbackCardReadonly(f, ja)).join('')}
+    </div>` : '';
+
+    // Records timeline — merge regular + patrol
+    const patrolForTimeline = getPatrols().filter(p => p.ban === emp.ban && p.nendo === year);
+    const TOPIC_ORDER = ['seguranca','qualidade','cooperacao','moral','produtividade','presenca'];
+    const allForTimeline = [
+        ...records.map(r => ({ ...r, _type: 'record' })),
+        ...patrolForTimeline.map(p => ({ ...p, _type: 'patrol' })),
+    ].sort((a,b) => {
+        const ta = TOPIC_ORDER.indexOf(a.topic);
+        const tb = TOPIC_ORDER.indexOf(b.topic);
+        if (ta !== tb) return ta - tb;
+        return b.date.localeCompare(a.date); // same topic → newest first
+    });
+
+    const timeline = allForTimeline.length
+        ? allForTimeline.map(r => r._type === 'patrol' ? buildPatrolCard(r, ja) : buildRecordCard(r)).join('')
+        : `<div class="empty-msg">📭 ${ja?'この年度に記録がありません':'Nenhum registro neste ano fiscal'}</div>`;
+
+    // Score label
+    const scoreLabel = finalScoreNum >= 7.1 ? (ja?'平均以上':'Acima da Média')
+                     : finalScoreNum >= 5.0 ? (ja?'平均':'Média')
+                     : finalScoreNum >= 3.0 ? (ja?'平均以下':'Abaixo da Média')
+                     :                        (ja?'要注意':'Muito Abaixo da Média');
+
+    const logoData = getLogo();
+    const logoHeaderHtml = logoData
+        ? `<div style="text-align:center;margin-bottom:12px;"><img src="${logoData}" style="max-height:56px;max-width:200px;object-fit:contain;"></div>`
+        : '';
+
+    // Build topic bars (highest → lowest) before injecting HTML
+    const topicKeys = Object.keys(TOPICS);
+    const topicOrder = topicKeys
+        .map((k, i) => ({ key: k, label: ja ? TOPICS[k].ja : TOPICS[k].pt, score: scores[i], color: TOPICS[k].color }))
+        .sort((a, b) => b.score - a.score);
+
+    const topicBarsHtml = topicOrder.map(t => `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+            <div style="width:72px;font-size:12px;color:#555;text-align:right;white-space:nowrap;flex-shrink:0;">${t.label}</div>
+            <div style="flex:1;background:#f1f5f9;border-radius:6px;height:11px;overflow:hidden;">
+                <div style="width:${(t.score/10*100).toFixed(1)}%;height:100%;background:${t.color};border-radius:6px;"></div>
+            </div>
+            <div style="width:32px;font-size:13px;font-weight:700;color:#1a365d;flex-shrink:0;">${t.score.toFixed(1)}</div>
+        </div>`).join('');
+
+    box.innerHTML = `
+    <div class="card no-print">
+        <div class="btn-group" style="margin-top:0;">
+            <button class="btn-primary" onclick="downloadAvalPDF('${emp.ban}','${year}')">📥 ${ja?'PDFダウンロード':'Baixar PDF'}</button>
+        </div>
+    </div>
+    <div id="printArea">
+    ${logoHeaderHtml}
+    <div class="card">
+        <div class="score-hero">
+            <div class="sh-left">
+                <span class="sh-num" style="color:${scoreColor};">${finalScore}</span>
+                <span class="sh-den">/ 10.0</span>
+            </div>
+            <div class="sh-right">
+                <div class="sh-label">${ja?'総合スコア':'Pontuação Geral'}</div>
+                <div style="font-size:15px;font-weight:700;margin-top:4px;">${scoreLabel}</div>
+                <div style="font-size:11px;opacity:0.65;margin-top:4px;">${ja?'各トピックのスコアの平均':'Média dos scores por tópico'}</div>
+            </div>
+        </div>
+        <h2>${esc(empName)} <span style="font-size:13px;color:#888;font-weight:400;">${emp.ban} | ${ja?'年度':'Ano'}: ${year}</span></h2>
+        <div class="summary-grid">${summaryBoxes}</div>
+    </div>
+    <div class="card">
+        <h2>📊 <span>${ja?'総合スコア — 平均':'Pontuação Geral — Média'}</span></h2>
+        <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;align-items:center;margin-bottom:28px;">
+            <div style="width:240px;flex:0 0 240px;"><canvas id="gaugeCanvas"></canvas></div>
+            <div style="width:300px;flex:0 0 300px;"><canvas id="radarCanvas"></canvas></div>
+        </div>
+        <div style="max-width:400px;margin:0 auto;">
+            ${topicBarsHtml}
+        </div>
+    </div>
+    ${liderSection}
+    <div class="card">
+        <h2>📋 <span>${ja?'すべての記録':'Todos os Registros'}</span>
+            <span style="font-size:13px;color:#888;font-weight:400;">(${records.length})</span>
+        </h2>
+        ${timeline}
+    </div>
+    </div>`;
+
+    setTimeout(() => {
+        drawGauge(finalScoreNum, scoreColor, ja);
+        drawRadar(scores, ja);
+    }, 60);
+}
+
+// ─── Print Avaliação ──────────────────────────────────────────────────────────
+function printAvaliacao() {
+    const area = document.getElementById('printArea');
+    if (!area) { alert(currentLang==='ja' ? 'まず社員を選択してください' : 'Selecione um funcionário primeiro'); return; }
+    const ja = currentLang === 'ja';
+    const w = window.open('', '_blank', 'width=900,height=700');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>${ja?'個人評価':'Avaliação Individual'}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 24px; color: #333; font-size: 13px; }
+        h2 { color: #1a365d; font-size: 16px; margin: 16px 0 10px; border-bottom: 2px solid #2b6cb0; padding-bottom: 6px; }
+        .card { margin-bottom: 18px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+        .s-box { padding: 12px; border-radius: 8px; color: white; text-align: center; }
+        .s-box .s-icon  { font-size: 20px; }
+        .s-box .s-name  { font-size: 11px; opacity: 0.9; }
+        .s-box .s-count { font-size: 24px; font-weight: 700; }
+        .s-box .s-detail{ font-size: 10px; opacity: 0.85; }
+        .sb-seguranca     { background: #ef4444; }
+        .sb-qualidade     { background: #10b981; }
+        .sb-cooperacao    { background: #3b82f6; }
+        .sb-moral         { background: #f59e0b; }
+        .sb-produtividade { background: #8b5cf6; }
+        .sb-presenca      { background: #06b6d4; }
+        .record-item { border: 1px solid #e0e0e0; border-left: 4px solid #2b6cb0; padding: 10px; margin-bottom: 8px; border-radius: 6px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .b-good { background: #d1fae5; color: #065f46; }
+        .b-warn { background: #fef3c7; color: #92400e; }
+        .b-bad  { background: #fee2e2; color: #7f1d1d; }
+        .b-pos  { background: #dbeafe; color: #1e3a8a; }
+        .b-neg  { background: #fce7f3; color: #831843; }
+        .b-extra{ background: #ede9fe; color: #5b21b6; }
+        .b-neutral{ background: #f1f5f9; color: #475569; }
+        .r-date { font-weight: 700; color: #1a365d; }
+        .r-emp  { color: #555; font-size: 12px; margin-left: 8px; }
+        strong  { color: #333; }
+        img { max-width: 120px; max-height: 80px; border-radius: 4px; margin-top: 6px; }
+        @media print { body { padding: 10px; } }
+    </style></head><body>
+    ${area.innerHTML}
+    <script>setTimeout(()=>window.print(),400);<\/script>
+    </body></html>`);
+    w.document.close();
+}
+
+// ─── Download PDF ─────────────────────────────────────────────────────────────
+async function downloadAvalPDF(ban, year) {
+    const area = document.getElementById('printArea');
+    if (!area) { alert(currentLang==='ja' ? 'まず社員を選択してください' : 'Selecione um funcionário primeiro'); return; }
+
+    // Check if libraries are loaded
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+        alert(currentLang==='ja'?'PDFライブラリを読み込んでいます。しばらくお待ちください。':'Biblioteca PDF ainda carregando. Tente novamente em segundos.');
+        return;
+    }
+
+    const btn = event?.target;
+    if (btn) { btn.disabled = true; btn.textContent = currentLang==='ja'?'生成中...':'Gerando...'; }
+
+    try {
+        const canvas = await html2canvas(area, { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.85);
+        const { jsPDF } = jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const pW = pdf.internal.pageSize.getWidth();
+        const pH = pdf.internal.pageSize.getHeight();
+        const imgW = pW - 20;
+        const imgH = (canvas.height * imgW) / canvas.width;
+        let posY = 10;
+        let remaining = imgH;
+
+        if (imgH <= pH - 20) {
+            pdf.addImage(imgData, 'JPEG', 10, posY, imgW, imgH);
+        } else {
+            // Multi-page
+            while (remaining > 0) {
+                const pageH = Math.min(remaining, pH - 20);
+                pdf.addImage(imgData, 'JPEG', 10, posY - (imgH - remaining), imgW, imgH);
+                remaining -= (pH - 20);
+                if (remaining > 0) { pdf.addPage(); posY = 10; }
+            }
+        }
+        pdf.save(`avaliacao_${ban}_${year}.pdf`);
+    } catch(e) {
+        console.error(e);
+        alert(currentLang==='ja'?'PDF生成中にエラーが発生しました。印刷機能をお試しください。':'Erro ao gerar PDF. Tente usar a função de impressão.');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = currentLang==='ja'?'📥 PDFダウンロード':'📥 Baixar PDF'; }
+    }
+}
+
+function calcSummary(topic, recs, ja) {
+    const count = recs.length;
+    if (!count) return { count: 0, detail: ja?'記録なし':'Sem registros', score: 5 };
+
+    // noScore records = registry only, never affect score
+    const scored    = recs.filter(r => !r.dados?.noScore);
+    const noScoreCnt = recs.length - scored.length;
+    const nsLabel   = noScoreCnt ? ` 📋${noScoreCnt}` : '';
+
+    // ── Simple rule (same for every topic incl. patrol) ──────────────────────
+    // positivo  → +0.5
+    // negativo  → -0.5
+    // atenção   →  0    (record kept, no point change)
+    // noScore   →  0
+    // Base: 5.0   Min: 0   Max: 10
+    // ─────────────────────────────────────────────────────────────────────────
+
+    if (topic === 'produtividade') {
+        const acimaAll  = recs.filter(r => r.dados?.performance === 'acima').length;
+        const mediaAll  = recs.filter(r => ['media','proximo'].includes(r.dados?.performance)).length;
+        const abaixoAll = recs.filter(r => r.dados?.performance === 'abaixo').length;
+        // acima → +0.5 each
+        // media/proximo → neutro (na faixa aceitável)
+        // abaixo → primeiros 4 = atenção (sem desconto), a partir do 5º = -0.5 cada
+        const pos          = scored.filter(r => r.dados?.performance === 'acima').length;
+        const abaixoScored = scored.filter(r => r.dados?.performance === 'abaixo').length;
+        const neg          = Math.max(0, abaixoScored - 4);
+        const score = Math.max(0, Math.min(10, 5.0 + pos * 0.5 - neg * 0.5));
+        return { count, detail: `🚀${acimaAll} ➡️${mediaAll} ⚠️${abaixoAll}${nsLabel}`, score: parseFloat(score.toFixed(2)) };
+    }
+
+    const posAll    = recs.filter(r => r.dados?.result === 'positivo').length;
+    const negAll    = recs.filter(r => r.dados?.result === 'negativo').length;
+    const atencAll  = recs.filter(r => r.dados?.result === 'atencao').length;
+    const pos       = scored.filter(r => r.dados?.result === 'positivo').length;
+    const neg       = scored.filter(r => r.dados?.result === 'negativo').length;
+    const score     = Math.max(0, Math.min(10, 5.0 + pos * 0.5 - neg * 0.5));
+    const atLabel   = atencAll ? ` ⚠️${atencAll}` : '';
+    return { count, detail: `✅${posAll} ❌${negAll}${atLabel}${nsLabel}`, score: parseFloat(score.toFixed(2)) };
+}
+
+
+function drawGauge(score, color, ja) {
+    const canvas = document.getElementById('gaugeCanvas');
+    if (!canvas) return;
+    if (radarChart) { radarChart.destroy(); radarChart = null; }
+
+    // Center text plugin — draws score + label inside the doughnut
+    const centerTextPlugin = {
+        id: 'centerText',
+        afterDraw(chart) {
+            const { ctx, chartArea: { top, left, right, bottom } } = chart;
+            const cx = (left + right) / 2;
+            const cy = (top + bottom) / 2;
+            ctx.save();
+
+            // Main score number
+            ctx.font = 'bold 38px Segoe UI, Hiragino Sans, sans-serif';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(score.toFixed(2), cx, cy - 10);
+
+            // "/ 10.0" sub-label
+            ctx.font = '13px Segoe UI, sans-serif';
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('/ 10.0', cx, cy + 20);
+
+            // Classification label
+            ctx.font = 'bold 11px Segoe UI, sans-serif';
+            ctx.fillStyle = color;
+            const lbl = score >= 7.1 ? (ja ? '平均以上' : 'Acima da Média')
+                       : score >= 5.0 ? (ja ? '平均'     : 'Média')
+                       : score >= 3.0 ? (ja ? '平均以下' : 'Abaixo da Média')
+                       :                (ja ? '要注意'   : 'Muito Abaixo');
+            ctx.fillText(lbl, cx, cy + 38);
+            ctx.restore();
+        }
+    };
+
+    radarChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [score, 10 - score],
+                backgroundColor: [color, '#e2e8f0'],
+                borderWidth: 0,
+                circumference: 270,
+                rotation: 225,
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '72%',
+            plugins: {
+                legend:  { display: false },
+                tooltip: { enabled: false },
+            },
+            animation: { duration: 600, easing: 'easeInOutQuart' },
+        },
+        plugins: [centerTextPlugin],
+    });
+}
+
+function drawRadar(scores, ja) {
+    const canvas = document.getElementById('radarCanvas');
+    if (!canvas) return;
+    if (radarChart2) { radarChart2.destroy(); radarChart2 = null; }
+    const topicKeys = Object.keys(TOPICS);
+    const labels = topicKeys.map(k => ja ? TOPICS[k].ja : TOPICS[k].pt);
+    const colors = topicKeys.map(k => TOPICS[k].color);
+    radarChart2 = new Chart(canvas, {
+        type: 'radar',
+        data: {
+            labels,
+            datasets: [{
+                data: scores,
+                backgroundColor: 'rgba(59,130,246,0.15)',
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                pointBackgroundColor: colors,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+            }]
+        },
+        options: {
+            responsive: true,
+            layout: { padding: { top: 12, bottom: 12, left: 16, right: 16 } },
+            scales: {
+                r: {
+                    min: 0, max: 10,
+                    ticks: { stepSize: 2, font: { size: 10 }, backdropColor: 'transparent' },
+                    pointLabels: { font: { size: 12, weight: 'bold' }, padding: 8 },
+                    grid: { color: '#e2e8f0' },
+                    angleLines: { color: '#e2e8f0' },
+                }
+            },
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            animation: { duration: 600, easing: 'easeInOutQuart' },
+        }
+    });
+}
+
+// ─── Employee management ─────────────────────────────────────────────────────
+function toggleAddEmpForm() {
+    document.getElementById('addEmpForm').classList.toggle('hidden');
+}
+
+async function addEmployee() {
+    const ban    = document.getElementById('newBan').value.trim();
+    const jpNome = document.getElementById('newJp').value.trim();
+    const ptNome = document.getElementById('newPt').value.trim();
+    const setor  = document.getElementById('newSetor').value.trim();
+    if (!ban || !jpNome || !ptNome) {
+        alert(currentLang==='ja'?'番号・日本語名・ポルトガル語名は必須です':'Nº, Nome JP e Nome PT são obrigatórios');
+        return;
+    }
+    if (_employees.find(e => e.ban === ban)) {
+        alert(currentLang==='ja'?'この番号はすでに使用されています':'Este número já está em uso'); return;
+    }
+    const cargo = document.getElementById('newCargo')?.value || 'operador';
+    const { data, error } = await sb.from('employees')
+        .insert([{ ban, jp_nome: jpNome, pt_nome: ptNome, setor, cargo }]).select().single();
+    if (error) { alert('Erro: ' + error.message); return; }
+    _employees.push({ id: data.id, ban, jpNome, ptNome, setor, cargo });
+    ['newBan','newJp','newPt','newSetor'].forEach(i => document.getElementById(i).value = '');
+    const nc = document.getElementById('newCargo'); if (nc) nc.value = 'operador';
+    toggleAddEmpForm();
+    populateAllEmpSelects();
+    renderEmpList();
+    renderLideres();
+    refreshAllRenderedContent();
+}
+
+async function deleteEmployee(id) {
+    if (!confirm(currentLang==='ja'?'この社員を削除しますか？':'Excluir este funcionário?')) return;
+    await sb.from('employees').delete().eq('id', id);
+    _employees = _employees.filter(e => e.id !== id);
+    populateAllEmpSelects();
+    renderEmpList();
+    renderLideres();
+    refreshAllRenderedContent();
+}
+
+function renderEmpList() {
+    const box  = document.getElementById('empList');
+    const ja   = currentLang === 'ja';
+    const emps = [...getEmployees()].sort((a, b) =>
+        String(a.ban).localeCompare(String(b.ban), undefined, { numeric: true, sensitivity: 'base' })
+    );
+    if (!emps.length) { box.innerHTML = `<div class="empty-msg">${ja?'社員がいません':'Nenhum funcionário cadastrado'}</div>`; return; }
+    box.innerHTML = emps.map(e => {
+        const isLider = e.cargo === 'lider';
+        const cargoBadge = isLider
+            ? `<span class="badge badge-lider">👑 ${ja?'リーダー':'Líder'}</span>`
+            : `<span class="badge badge-operador">👤 ${ja?'オペレーター':'Operador'}</span>`;
+        return `
+    <div class="emp-row" id="emp-row-${e.id}" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <div class="emp-row-main">${esc(e.ban)} — ${esc(ja ? e.jpNome : e.ptNome)} ${cargoBadge}</div>
+                <div class="emp-row-sub">${esc(ja ? e.ptNome : e.jpNome)}${e.setor ? ' | ' + esc(e.setor) : ''}</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button class="btn-secondary btn-sm" onclick="toggleEditEmp(${e.id})">✏️</button>
+                <button class="btn-danger btn-sm" onclick="deleteEmployee(${e.id})">🗑️</button>
+            </div>
+        </div>
+        <div id="edit-form-${e.id}" class="hidden inline-form" style="margin-top:12px;">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>${ja?'社員番号':'Matrícula (BAN)'}</label>
+                    <input type="text" id="edit-ban-${e.id}" value="${esc(e.ban)}">
+                </div>
+                <div class="form-group">
+                    <label>${ja?'セクター':'Setor'}</label>
+                    <input type="text" id="edit-setor-${e.id}" value="${esc(e.setor||'')}">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>🇯🇵 ${ja?'日本語名':'Nome em japonês'}</label>
+                    <input type="text" id="edit-jp-${e.id}" value="${esc(e.jpNome)}">
+                </div>
+                <div class="form-group">
+                    <label>🇧🇷 ${ja?'ポルトガル語名':'Nome em português'}</label>
+                    <input type="text" id="edit-pt-${e.id}" value="${esc(e.ptNome)}">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>${ja?'役職':'Cargo'}</label>
+                    <select id="edit-cargo-${e.id}">
+                        <option value="operador" ${!isLider?'selected':''}>${ja?'👤 オペレーター':'👤 Operador'}</option>
+                        <option value="lider"    ${isLider?'selected':''}>${ja?'👑 リーダー':'👑 Líder'}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="btn-group" style="margin-top:8px;">
+                <button class="btn-primary btn-sm" onclick="saveEditEmp(${e.id})">💾 ${ja?'保存':'Salvar'}</button>
+                <button class="btn-secondary btn-sm" onclick="toggleEditEmp(${e.id})">✕ ${ja?'キャンセル':'Cancelar'}</button>
+            </div>
+        </div>
+    </div>`;
+    }).join('');
+}
+
+function toggleEditEmp(id) {
+    const form = document.getElementById('edit-form-' + id);
+    if (form) form.classList.toggle('hidden');
+}
+
+async function saveEditEmp(id) {
+    const ban   = document.getElementById('edit-ban-'  + id)?.value.trim();
+    const jpNome= document.getElementById('edit-jp-'   + id)?.value.trim();
+    const ptNome= document.getElementById('edit-pt-'   + id)?.value.trim();
+    const setor = document.getElementById('edit-setor-'+ id)?.value.trim();
+    const ja    = currentLang === 'ja';
+
+    if (!ban || !jpNome || !ptNome) {
+        alert(ja?'必須項目を入力してください':'Preencha todos os campos obrigatórios');
+        return;
+    }
+
+    const idx = _employees.findIndex(e => e.id === id);
+    if (idx === -1) return;
+
+    const cargo  = document.getElementById('edit-cargo-' + id)?.value || 'operador';
+    const oldBan = _employees[idx].ban;
+    await sb.from('employees').update({ ban, jp_nome: jpNome, pt_nome: ptNome, setor, cargo }).eq('id', id);
+    _employees[idx] = { ..._employees[idx], ban, jpNome, ptNome, setor, cargo };
+
+    // Update cached records with new name/ban
+    _registros = _registros.map(r => r.ban === oldBan ? { ...r, ban, jpNome, ptNome } : r);
+
+    populateAllEmpSelects();
+    renderEmpList();
+    renderLideres();
+    refreshAllRenderedContent();
+}
+
+// ─── Patrol tab ───────────────────────────────────────────────────────────────
+function togglePatrolNoScore(prefix) {
+    // No severity div anymore — nothing to toggle
+}
+
+async function savePatrol() {
+    const ja    = currentLang === 'ja';
+    const ban   = document.getElementById('patrol-emp')?.value;
+    const date  = document.getElementById('patrol-date')?.value;
+
+    if (!ban)  { alert(ja ? '社員を選択してください' : 'Selecione um funcionário'); return; }
+    if (!date) { alert(ja ? '日付を入力してください' : 'Informe a data'); return; }
+
+    const emp = _employees.find(e => e.ban === ban);
+    if (!emp) return;
+    const nendo = calcNendo(date);
+
+    const segNoScore = document.getElementById('patrol-seg-noscore')?.checked || false;
+    const segResult  = document.getElementById('patrol-seg-result')?.value || 'positivo';
+    const segCmt     = document.getElementById('patrol-seg-comment')?.value.trim() || '';
+    const qualNoScore= document.getElementById('patrol-qual-noscore')?.checked || false;
+    const qualResult = document.getElementById('patrol-qual-result')?.value || 'positivo';
+    const qualCmt    = document.getElementById('patrol-qual-comment')?.value.trim() || '';
+    const respNome   = document.getElementById('patrol-resp')?.value || '';
+
+    const ts   = Date.now();
+    const segR = { id:`pt_${ts}_seg`,  ban:emp.ban, jp_nome:emp.jpNome, pt_nome:emp.ptNome, date, nendo, topic:'seguranca', result:segResult,  comentario:segCmt,  is_patrol:true, no_score:segNoScore,  resp:respNome };
+    const quaR = { id:`pt_${ts}_qual`, ban:emp.ban, jp_nome:emp.jpNome, pt_nome:emp.ptNome, date, nendo, topic:'qualidade', result:qualResult, comentario:qualCmt, is_patrol:true, no_score:qualNoScore, resp:respNome };
+
+    try {
+        const { error } = await sb.from('patrols').insert([segR, quaR]);
+        if (error) throw error;
+        _patrols.push(
+            { id:segR.id,  ban:emp.ban, jpNome:emp.jpNome, ptNome:emp.ptNome, date, nendo, topic:'seguranca', result:segResult,  comentario:segCmt,  isPatrol:true, noScore:segNoScore,  resp:respNome },
+            { id:quaR.id,  ban:emp.ban, jpNome:emp.jpNome, ptNome:emp.ptNome, date, nendo, topic:'qualidade', result:qualResult, comentario:qualCmt, isPatrol:true, noScore:qualNoScore, resp:respNome }
+        );
+    } catch (e) {
+        alert(ja ? '⚠️ 保存に失敗しました: ' + e.message : '⚠️ Falha ao salvar: ' + e.message);
+        return;
+    }
+
+    // Reset form
+    document.getElementById('patrol-emp').value = '';
+    document.getElementById('patrol-date').value = '';
+    const respPatrolEl = document.getElementById('patrol-resp');
+    if (respPatrolEl) respPatrolEl.value = '';
+    ['seg','qual'].forEach(p => {
+        document.getElementById(`patrol-${p}-noscore`).checked = false;
+        document.getElementById(`patrol-${p}-result`).value = 'positivo';
+        document.getElementById(`patrol-${p}-comment`).value = '';
+    });
+
+    alert(ja ? '✅ 保存しました' : '✅ Patrulha salva com sucesso!');
+    renderPatrolList();
+    renderAvaliacao();
+}
+
+function renderPatrolList() {
+    updatePatrolEmpFilter();
+    const ja    = currentLang === 'ja';
+    const year  = document.getElementById('patrol-list-year')?.value || '26';
+    const ban   = document.getElementById('patrol-list-emp')?.value  || '';
+    const topic = document.getElementById('patrol-list-topic')?.value || '';
+    const box   = document.getElementById('patrolList');
+    if (!box) return;
+
+    let recs = getPatrols().filter(r => r.nendo === year);
+    if (ban)   recs = recs.filter(r => r.ban   === ban);
+    if (topic) recs = recs.filter(r => r.topic === topic);
+    recs.sort((a, b) => b.date.localeCompare(a.date));
+
+    box.innerHTML = recs.length
+        ? recs.map(r => buildPatrolCard(r, ja)).join('')
+        : `<div class="empty-msg">📭 ${ja ? 'この条件に記録がありません' : 'Nenhum registro encontrado'}</div>`;
+}
+
+function buildPatrolCard(r, ja) {
+    const empName  = ja ? r.jpNome : r.ptNome;
+    const isSeg    = r.topic === 'seguranca';
+    const topicBadge = isSeg
+        ? `<span class="badge" style="background:#fee2e2;color:#7f1d1d;">🔒 ${ja?'安全':'Segurança'}</span>`
+        : `<span class="badge" style="background:#d1fae5;color:#065f46;">✅ ${ja?'品質':'Qualidade'}</span>`;
+    const borderColor = isSeg ? '#ef4444' : '#10b981';
+
+    const resultMap = {
+        positivo: `<span class="badge b-pos">✅ ${ja?'ポジティブ':'Positivo'}</span>`,
+        atencao:  `<span class="badge b-warn">⚠️ ${ja?'注意':'Atenção'}</span>`,
+        negativo: `<span class="badge b-neg">❌ ${ja?'ネガティブ':'Negativo'}</span>`,
+    };
+    const noScoreBadge = `<span class="badge b-neutral">📋 ${ja?'採点なし':'Sem Pontuação'}</span>`;
+
+    return `<div class="record-item" style="border-left:5px solid ${borderColor};" id="patrol-card-${r.id}">
+        <div class="record-top">
+            <div class="record-meta">
+                <span class="r-date">📅 ${r.date}</span>
+                <span class="r-emp">👤 ${esc(empName)}</span>
+                ${topicBadge}
+                ${r.resp ? `<span class="badge b-neutral" style="font-size:11px;">🧑‍💼 ${esc(r.resp)}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button class="btn-secondary btn-sm" onclick="downloadPatrolPDF('${r.id}')">📄 PDF</button>
+                <button class="btn-danger btn-sm" onclick="deletePatrol('${r.id}')">🗑️</button>
+            </div>
+        </div>
+        <div class="record-body">
+            <div class="record-field">
+                ${r.noScore ? noScoreBadge : (resultMap[r.result]||r.result)}
+            </div>
+            ${r.comentario ? `<div class="record-field"><strong>${ja?'コメント':'Comentário'}:</strong> ${esc(r.comentario)}</div>` : ''}
+        </div>
+    </div>`;
+}
+
+async function deletePatrol(id) {
+    const ja = currentLang === 'ja';
+    if (!confirm(ja ? 'この記録を削除しますか？' : 'Excluir este registro?')) return;
+    // Delete both paired records (same timestamp prefix)
+    const prefix = String(id).replace(/_seg$|_qual$/, '');
+    await sb.from('patrols').delete().like('id', prefix + '%');
+    _patrols = _patrols.filter(p => !String(p.id).startsWith(prefix));
+    renderPatrolList();
+    renderAvaliacao();
+}
+
+function downloadPatrolPDF(id) {
+    const ja  = currentLang === 'ja';
+    const all = getPatrols();
+    const r   = all.find(p => p.id === id);
+    if (!r) return;
+
+    // Find paired record from same patrol session (same timestamp prefix)
+    const tsPrefix = String(id).replace(/_seg$|_qual$/, '');
+    const segRec   = all.find(p => p.id === tsPrefix + '_seg');
+    const qualRec  = all.find(p => p.id === tsPrefix + '_qual');
+    const empName  = ja ? r.jpNome : r.ptNome;
+
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+        alert(ja ? 'PDFライブラリを読み込み中です。しばらくお待ちください。' : 'Biblioteca PDF ainda carregando. Tente novamente em segundos.');
+        return;
+    }
+
+    const resultLabel = (rec) => {
+        if (!rec) return '—';
+        if (rec.noScore)               return ja ? '📋 採点なし'   : '📋 Sem Pontuação';
+        if (rec.result === 'positivo') return ja ? '✅ ポジティブ' : '✅ Positivo';
+        if (rec.result === 'negativo') return ja ? '❌ ネガティブ' : '❌ Negativo';
+        return ja ? '⚠️ 注意' : '⚠️ Atenção';
+    };
+    const resultColor = (rec) => {
+        if (!rec || rec.noScore || rec.result === 'atencao') return '#555';
+        return rec.result === 'positivo' ? '#1e3a8a' : '#7f1d1d';
+    };
+
+    const _storedLogo = getLogo();
+    const logoTag = _storedLogo
+        ? `<img src="${_storedLogo}" style="height:48px;object-fit:contain;">`
+        : `<img src="LOGO%203.gif" style="height:48px;object-fit:contain;" onerror="this.style.display='none'">`;
+
+    const buildTopicBlock = (rec, topicLabel, borderColor) => {
+        if (!rec) return '';
+        return `
+        <div style="border-left:4px solid ${borderColor};padding:10px 16px;border-radius:6px;background:#fafafa;margin-bottom:12px;">
+            <div style="font-weight:700;font-size:14px;color:#1a365d;margin-bottom:6px;">${topicLabel}</div>
+            <div style="font-weight:700;color:${resultColor(rec)};font-size:13px;margin-bottom:6px;">${resultLabel(rec)}</div>
+            ${rec.comentario ? `<div style="font-size:13px;color:#444;"><strong>${ja?'コメント':'Comentário'}:</strong> ${rec.comentario.replace(/\n/g,'<br>')}</div>` : ''}
+        </div>`;
+    };
+
+    const html = `<!DOCTYPE html>
+<html lang="${ja?'ja':'pt-BR'}">
+<head>
+    <meta charset="UTF-8">
+    <title>${ja?'巡回記録':'Registro de Patrulha'} — ${empName}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Hiragino Sans',sans-serif; padding:32px 40px; color:#1a1a2e; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:3px solid #1a365d; margin-bottom:20px; }
+        .header h1 { font-size:20px; font-weight:700; color:#1a365d; }
+        .header .sub { font-size:13px; color:#555; margin-top:4px; }
+        .meta-box { background:#f4f7fb; border-radius:8px; padding:14px 18px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:14px; }
+        .meta-box .item { font-size:13px; } .meta-box .item strong { color:#1a365d; }
+        @media print { body { padding:20px 28px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🚶 ${ja?'巡回記録':'Registro de Patrulha'}</h1>
+            <div class="sub">${ja?'社員評価システム':'Sistema de Avaliação de Funcionários'}</div>
+        </div>
+        ${logoTag}
+    </div>
+    <div class="meta-box">
+        <div class="item">👤 <strong>${ja?'氏名':'Nome'}:</strong> ${empName}</div>
+        <div class="item">🔖 <strong>BAN:</strong> ${r.ban}</div>
+        <div class="item">📅 <strong>${ja?'日付':'Data'}:</strong> ${r.date}</div>
+        <div class="item">📋 <strong>${ja?'年度':'Ano Fiscal'}:</strong> ${ja?`${r.nendo}年度`:`Ano ${r.nendo}`}</div>
+        ${r.resp ? `<div class="item">🧑‍💼 <strong>${ja?'担当者':'Responsável'}:</strong> ${r.resp}</div>` : ''}
+    </div>
+    ${buildTopicBlock(segRec,  `🔒 ${ja?'安全':'Segurança'}`, '#ef4444')}
+    ${buildTopicBlock(qualRec, `✅ ${ja?'品質':'Qualidade'}`, '#10b981')}
+</body>
+</html>`;
+
+    const { jsPDF } = jspdf;
+    const win = window.open('', '_blank', 'width=820,height=700');
+    win.onload = () => {
+        setTimeout(() => {
+            html2canvas(win.document.body, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.88);
+                const pdf  = new jsPDF('p', 'mm', 'a4');
+                const pw = 210; const ph = 297;
+                const imgW = pw;
+                const imgH = (canvas.height / canvas.width) * pw;
+                let y = 0;
+                while (y < imgH) {
+                    if (y > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, -y, imgW, imgH);
+                    y += ph;
+                }
+                pdf.save(`patrulha_${r.ban}_${r.date}.pdf`);
+                win.close();
+            }).catch(() => { win.close(); alert(ja ? 'PDF生成中にエラーが発生しました。' : 'Erro ao gerar PDF.'); });
+        }, 300);
+    };
+    win.document.write(html);
+    win.document.close();
+}
+
+// ─── Líderes tab ──────────────────────────────────────────────────────────────
+function renderLideres() {
+    const ja   = currentLang === 'ja';
+    const emps = getEmployees()
+        .filter(e => e.cargo === 'lider')
+        .sort((a, b) => a.ban.localeCompare(b.ban, undefined, { numeric: true, sensitivity: 'base' }));
+    const sel  = document.getElementById('lider-emp');
+    if (!sel) return;
+
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">— ${ja ? '選択してください' : 'Selecione'} —</option>` +
+        emps.map(e => {
+            const name = ja ? e.jpNome : e.ptNome;
+            return `<option value="${e.id}" ${String(e.id) === prev ? 'selected' : ''}>${name} (${e.ban})</option>`;
+        }).join('');
+
+    renderLideresContent();
+}
+
+function renderLideresContent() {
+    const ja      = currentLang === 'ja';
+    const empId   = parseInt(document.getElementById('lider-emp')?.value);
+    const nendo   = document.getElementById('lider-year')?.value || '26';
+    const box     = document.getElementById('lideresContent');
+    if (!box) return;
+
+    if (!empId) {
+        box.innerHTML = `<div class="card" style="text-align:center;color:#888;padding:30px;">
+            ${ja ? 'リーダーを選択してください' : 'Selecione um líder para continuar'}</div>`;
+        return;
+    }
+
+    const emps  = getEmployees();
+    const emp   = emps.find(e => e.id === empId);
+    if (!emp) { box.innerHTML = ''; return; }
+
+    const name  = ja ? emp.jpNome : emp.ptNome;
+    const allFb = getLidFeedback();
+    const history = allFb.filter(f => f.empId === empId && f.nendo === nendo)
+                         .sort((a, b) => b.ts - a.ts);
+
+    // ── New feedback form ──
+    const topicFields = LIDER_TOPICOS.map(t => `
+        <div class="card" style="margin-bottom:12px;background:#fafbff;border:1px solid #e2e8f0;">
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">
+                <span style="font-size:22px;line-height:1;">${t.icon}</span>
+                <div>
+                    <div style="font-weight:700;color:#1a365d;font-size:14px;">${ja ? t.ja : t.pt}</div>
+                    <div style="font-size:12px;color:#777;margin-top:2px;">${ja ? t.desc_ja : t.desc_pt}</div>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+                <label style="flex:1;cursor:pointer;padding:8px 10px;border-radius:7px;border:2px solid #d1fae5;background:#f0fdf4;text-align:center;font-weight:700;font-size:13px;color:#065f46;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <input type="radio" name="lid-cls-${t.key}" value="positivo" checked>
+                    ✅ ${ja ? 'ポジティブ' : 'Positivo'}
+                </label>
+                <label style="flex:1;cursor:pointer;padding:8px 10px;border-radius:7px;border:2px solid #fed7aa;background:#fff7ed;text-align:center;font-weight:700;font-size:13px;color:#9a3412;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <input type="radio" name="lid-cls-${t.key}" value="melhorar">
+                    ⚠️ ${ja ? '改善点' : 'Ponto a Melhorar'}
+                </label>
+            </div>
+            <textarea id="lid-txt-${t.key}" rows="3" placeholder="${ja ? 'コメントを入力…' : 'Escreva seu comentário…'}"></textarea>
+        </div>`).join('');
+
+    // ── History ──
+    const histHtml = history.length === 0
+        ? `<p style="color:#aaa;font-size:13px;text-align:center;padding:16px;">
+            ${ja ? '過去のフィードバックはありません' : 'Nenhum feedback registrado ainda'}</p>`
+        : history.map(f => buildFeedbackCard(f, ja)).join('');
+
+    box.innerHTML = `
+        <div class="card">
+            <h2>✏️ ${ja ? `${name} へのフィードバック` : `Feedback para ${name}`}</h2>
+            <div style="margin-bottom:8px;color:#555;font-size:13px;">
+                📅 ${ja ? '年度' : 'Ano Fiscal'}: <strong>${ja ? `${nendo}年度` : `Ano ${nendo}`}</strong>
+            </div>
+            ${topicFields}
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                <button class="btn-primary" onclick="saveLiderFeedback(${empId})">
+                    💾 ${ja ? '保存する' : 'Salvar Feedback'}
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 ${ja ? 'フィードバック履歴' : 'Histórico de Feedbacks'} — ${name}</h2>
+            ${histHtml}
+        </div>`;
+}
+
+function buildFeedbackCardReadonly(f, ja) {
+    const d   = new Date(f.ts);
+    const fmt = d.toLocaleDateString(ja ? 'ja-JP' : 'pt-BR', { year:'numeric', month:'long', day:'numeric' });
+    const rows = LIDER_TOPICOS.map(t => {
+        const raw = f.topicos[t.key];
+        const txt = typeof raw === 'string' ? raw : (raw?.txt || '');
+        const cls = typeof raw === 'string' ? 'positivo' : (raw?.cls || 'positivo');
+        if (!txt) return '';
+        const clsBadge = cls === 'melhorar'
+            ? `<span style="background:#fed7aa;color:#9a3412;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;">⚠️ ${ja ? '改善点' : 'Ponto a Melhorar'}</span>`
+            : `<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;">✅ ${ja ? 'ポジティブ' : 'Positivo'}</span>`;
+        return `<div style="margin-bottom:12px;">
+            <div style="font-weight:700;color:#1a365d;font-size:13px;display:flex;align-items:center;flex-wrap:wrap;">${t.icon} ${ja ? t.ja : t.pt}${clsBadge}</div>
+            <div style="font-size:13px;color:#444;margin-top:4px;white-space:pre-wrap;line-height:1.6;">${escHtml(txt)}</div>
+        </div>`;
+    }).join('');
+
+    return `<div class="record-item" style="border-left-color:#d97706;">
+        <div class="record-top">
+            <div class="record-meta">
+                <span class="r-date">📅 ${fmt}</span>
+                <span class="badge" style="background:#fef3c7;color:#92400e;">👑 ${ja ? 'リーダー評価' : 'Avaliação de Líder'}</span>
+            </div>
+        </div>
+        <div class="record-body">${rows || `<span style="color:#aaa;">${ja ? '内容なし' : 'Sem conteúdo'}</span>`}</div>
+    </div>`;
+}
+
+function buildFeedbackCard(f, ja) {
+    const d   = new Date(f.ts);
+    const fmt = d.toLocaleDateString(ja ? 'ja-JP' : 'pt-BR', { year:'numeric', month:'long', day:'numeric' });
+    const rows = LIDER_TOPICOS.map(t => {
+        const raw = f.topicos[t.key];
+        const txt = typeof raw === 'string' ? raw : (raw?.txt || '');
+        const cls = typeof raw === 'string' ? 'positivo' : (raw?.cls || 'positivo');
+        if (!txt) return '';
+        const clsBadge = cls === 'melhorar'
+            ? `<span style="background:#fed7aa;color:#9a3412;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;">⚠️ ${ja ? '改善点' : 'Ponto a Melhorar'}</span>`
+            : `<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-left:6px;">✅ ${ja ? 'ポジティブ' : 'Positivo'}</span>`;
+        return `<div style="margin-bottom:12px;">
+            <div style="font-weight:700;color:#1a365d;font-size:13px;display:flex;align-items:center;flex-wrap:wrap;">${t.icon} ${ja ? t.ja : t.pt}${clsBadge}</div>
+            <div style="font-size:13px;color:#444;margin-top:4px;white-space:pre-wrap;line-height:1.6;">${escHtml(txt)}</div>
+        </div>`;
+    }).join('');
+
+    return `<div class="record-item" id="lidfb-${f.id}" style="border-left-color:#d97706;">
+        <div class="record-top">
+            <div class="record-meta">
+                <span class="r-date">📅 ${fmt}</span>
+                <span class="badge" style="background:#fef3c7;color:#92400e;">👑 ${ja ? 'リーダー評価' : 'Avaliação de Líder'}</span>
+            </div>
+            <div style="display:flex;gap:6px;">
+                <button class="btn-secondary btn-sm" onclick="downloadLiderPDF('${f.id}')">📄 PDF</button>
+                <button class="btn-danger btn-sm" onclick="deleteLiderFeedback('${f.id}')">🗑️</button>
+            </div>
+        </div>
+        <div class="record-body">${rows || `<span style="color:#aaa;">${ja ? '内容なし' : 'Sem conteúdo'}</span>`}</div>
+    </div>`;
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function saveLiderFeedback(empId) {
+    const ja    = currentLang === 'ja';
+    const nendo = document.getElementById('lider-year')?.value || '26';
+
+    const topicos = {};
+    LIDER_TOPICOS.forEach(t => {
+        const txt = document.getElementById('lid-txt-' + t.key)?.value.trim() || '';
+        const cls = document.querySelector(`input[name="lid-cls-${t.key}"]:checked`)?.value || 'positivo';
+        topicos[t.key] = { txt, cls };
+    });
+
+    const hasAny = Object.values(topicos).some(v => v.txt.length > 0);
+    if (!hasAny) {
+        alert(ja ? '少なくとも1項目を入力してください' : 'Preencha pelo menos um campo antes de salvar');
+        return;
+    }
+
+    const emp = _employees.find(e => e.id === empId);
+    const ts  = Date.now();
+    const record = {
+        id: 'lf_' + ts, empId, nendo, ts,
+        jpNome: emp?.jpNome || '', ptNome: emp?.ptNome || '', ban: emp?.ban || '',
+        topicos,
+    };
+
+    const { error } = await sb.from('lider_feedbacks').insert([{
+        id: record.id, ban: record.ban, nendo: record.nendo,
+        emp_id: record.empId, jp_nome: record.jpNome, pt_nome: record.ptNome,
+        ts: record.ts, topicos: record.topicos
+    }]);
+    if (error) { alert('Erro: ' + error.message); return; }
+    _liderFbs.push(record);
+
+    alert(ja ? '保存しました' : 'Feedback salvo com sucesso!');
+    renderLideresContent();
+}
+
+async function deleteLiderFeedback(id) {
+    const ja = currentLang === 'ja';
+    if (!confirm(ja ? 'このフィードバックを削除しますか？' : 'Excluir este feedback?')) return;
+    await sb.from('lider_feedbacks').delete().eq('id', id);
+    _liderFbs = _liderFbs.filter(f => f.id !== id);
+    renderLideresContent();
+}
+
+function buildFeedbackPrintHtml(f, ja) {
+    const d   = new Date(f.ts);
+    const fmt = d.toLocaleDateString(ja ? 'ja-JP' : 'pt-BR', { year:'numeric', month:'long', day:'numeric' });
+    const name = ja ? f.jpNome : f.ptNome;
+
+    const rows = LIDER_TOPICOS.map(t => {
+        const raw = f.topicos[t.key];
+        const txt = typeof raw === 'string' ? raw : (raw?.txt || '');
+        const cls = typeof raw === 'string' ? 'positivo' : (raw?.cls || 'positivo');
+        const clsLabel = cls === 'melhorar'
+            ? `<span style="background:#fed7aa;color:#9a3412;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700;margin-left:8px;">⚠️ ${ja ? '改善点' : 'Ponto a Melhorar'}</span>`
+            : `<span style="background:#d1fae5;color:#065f46;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700;margin-left:8px;">✅ ${ja ? 'ポジティブ' : 'Positivo'}</span>`;
+        return `<div style="margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:700;font-size:15px;color:#1a365d;margin-bottom:6px;display:flex;align-items:center;flex-wrap:wrap;">${t.icon} ${ja ? t.ja : t.pt}${clsLabel}</div>
+            <div style="font-size:13px;color:#666;margin-bottom:8px;">${ja ? t.desc_ja : t.desc_pt}</div>
+            <div style="font-size:14px;color:#333;white-space:pre-wrap;min-height:40px;padding:10px;background:#f9fafb;border-radius:6px;border:1px solid #e5e7eb;">${txt ? escHtml(txt) : `<span style="color:#aaa;">${ja ? '記録なし' : 'Sem registro'}</span>`}</div>
+        </div>`;
+    }).join('');
+
+    return `<!DOCTYPE html>
+<html lang="${ja ? 'ja' : 'pt-BR'}">
+<head>
+    <meta charset="UTF-8">
+    <title>${ja ? 'リーダーフィードバック' : 'Feedback de Líder'} — ${name}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI','Hiragino Sans',sans-serif; padding:32px 40px; color:#1a1a2e; }
+        .page-header { display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:14px; border-bottom:3px solid #1a365d; margin-bottom:20px; }
+        h1 { font-size:22px; font-weight:700; color:#1a365d; margin-bottom:4px; }
+        .subtitle { font-size:14px; color:#666; margin-top:6px; }
+        @media print { body { padding:20px 28px; } button { display:none; } }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div>
+            <h1>👑 ${ja ? 'リーダー評価フィードバック' : 'Feedback de Avaliação de Líder'}</h1>
+            <div class="subtitle">
+                ${ja ? '氏名' : 'Nome'}: <strong>${name}</strong> &nbsp;|&nbsp;
+                BAN: <strong>${f.ban}</strong> &nbsp;|&nbsp;
+                ${ja ? '年度' : 'Ano Fiscal'}: <strong>${ja ? `${f.nendo}年度` : `Ano ${f.nendo}`}</strong> &nbsp;|&nbsp;
+                ${ja ? '日付' : 'Data'}: <strong>${fmt}</strong>
+            </div>
+        </div>
+        ${getLogo()
+            ? `<img src="${getLogo()}" style="height:50px;object-fit:contain;">`
+            : `<img src="LOGO%203.gif" style="height:50px;object-fit:contain;" onerror="this.style.display='none'">`}
+    </div>
+    ${rows}
+</body>
+</html>`;
+}
+
+function printLiderFeedback(id) {
+    const all = getLidFeedback();
+    const f   = all.find(r => r.id === id);
+    if (!f) return;
+    const ja  = currentLang === 'ja';
+    const win = window.open('', '_blank', 'width=800,height=700');
+    win.document.write(buildFeedbackPrintHtml(f, ja));
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 400);
+}
+
+function downloadLiderPDF(id) {
+    const all = getLidFeedback();
+    const f   = all.find(r => r.id === id);
+    if (!f) return;
+    const ja   = currentLang === 'ja';
+    const name = ja ? f.jpNome : f.ptNome;
+
+    if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
+        alert(ja ? 'PDFライブラリを読み込み中です。しばらくお待ちください。' : 'Biblioteca PDF ainda carregando. Tente novamente em segundos.');
+        return;
+    }
+
+    const { jsPDF } = jspdf;
+    const win = window.open('', '_blank', 'width=900,height=800');
+    win.onload = () => {
+        setTimeout(() => {
+            html2canvas(win.document.body, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.88);
+                const pdf  = new jsPDF('p', 'mm', 'a4');
+                const pw   = 210; const ph = 297;
+                const iw   = canvas.width;  const ih = canvas.height;
+                const ratio = pw / (iw / 2);
+                const imgH  = (ih / 2) * ratio;
+                let y = 0;
+                while (y < imgH) {
+                    if (y > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, -y, pw, imgH);
+                    y += ph;
+                }
+                pdf.save(`feedback_${name.replace(/\s/g,'_')}_${f.nendo}.pdf`);
+                win.close();
+            }).catch(() => { win.close(); alert(ja ? 'PDF生成中にエラーが発生しました。' : 'Erro ao gerar PDF.'); });
+        }, 300);
+    };
+    win.document.write(buildFeedbackPrintHtml(f, ja));
+    win.document.close();
+}
+
+// ─── Populate all employee selects ────────────────────────────────────────────
+function populateAllEmpSelects() {
+    const ja   = currentLang === 'ja';
+    // Sort once by BAN using natural numeric order (e.g. H240021 < H240037)
+    const emps = getEmployees().slice().sort((a, b) =>
+        a.ban.localeCompare(b.ban, undefined, { numeric: true, sensitivity: 'base' })
+    );
+
+    // Main form select (value = emp.id)
+    const novoEl = document.getElementById('novoEmp');
+    const avalEl = document.getElementById('aval-emp');
+    [novoEl, avalEl].forEach(sel => {
+        if (!sel) return;
+        const prev = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        emps.forEach(e => {
+            const o = new Option(`${ja ? e.jpNome : e.ptNome} (${e.ban})`, e.id);
+            sel.appendChild(o);
+        });
+        sel.value = prev;
+    });
+
+    // Filter selects (value = emp.ban)
+    // Patrol form + patrol list-filter selects (value = emp.ban, first option is "all")
+    ['patrol-emp', 'patrol-list-emp'].forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const prev = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        emps.forEach(e => {
+            const o = new Option(`${ja ? e.jpNome : e.ptNome} (${e.ban})`, e.ban);
+            sel.appendChild(o);
+        });
+        sel.value = prev;
+    });
+
+    const filterIds = ['seg-emp','qual-emp','coop-emp','moral-emp','prod-emp','pres-emp'];
+    filterIds.forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const prev = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        emps.forEach(e => {
+            const o = new Option(`${ja ? e.jpNome : e.ptNome} (${e.ban})`, e.ban);
+            sel.appendChild(o);
+        });
+        sel.value = prev;
+    });
+    populateRespSelects();
+}
+
+// ─── Employee filter helpers (per context) ───────────────────────────────────
+
+// Update a topic's employee select to only show employees with records in that topic+year
+// Shared helper: sorted list of all registered employees
+function _sortedEmps() {
+    return getEmployees().slice().sort((a,b) =>
+        a.ban.localeCompare(b.ban, undefined, { numeric: true, sensitivity: 'base' })
+    );
+}
+
+// Populate a filter select with ALL registered employees (value = ban)
+function _fillEmpSelect(selId) {
+    const ja     = currentLang === 'ja';
+    const sel    = document.getElementById(selId);
+    if (!sel) return;
+    const prev   = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
+    _sortedEmps().forEach(e => {
+        sel.appendChild(new Option(`${ja ? e.jpNome : e.ptNome} (${e.ban})`, e.ban));
+    });
+    sel.value = [...sel.options].some(o => o.value === prev) ? prev : '';
+}
+
+// Populate avaliacao select with ALL registered employees (value = id)
+function _fillAvalSelect() {
+    const ja     = currentLang === 'ja';
+    const sel    = document.getElementById('aval-emp');
+    if (!sel) return;
+    const prev   = sel.value;
+    while (sel.options.length > 1) sel.remove(1);
+    _sortedEmps().forEach(e => {
+        sel.appendChild(new Option(`${ja ? e.jpNome : e.ptNome} (${e.ban})`, String(e.id)));
+    });
+    sel.value = [...sel.options].some(o => o.value === prev) ? prev : '';
+}
+
+function updateTopicEmpFilter(topic) {
+    const tf = TOPIC_FILTERS[topic];
+    if (tf) _fillEmpSelect(tf.emp);
+}
+
+function updatePatrolEmpFilter() {
+    _fillEmpSelect('patrol-list-emp');
+}
+
+function updateAvalEmpFilter() {
+    _fillAvalSelect();
+}
+
+// Re-render whichever tab is currently visible (called after year list changes)
+function refreshAllRenderedContent() {
+    const activeTab = document.querySelector('.tab-content.active');
+    if (!activeTab) return;
+    const topicMap = {
+        'tab-seguranca':'seguranca','tab-qualidade':'qualidade','tab-cooperacao':'cooperacao',
+        'tab-moral':'moral','tab-produtividade':'produtividade','tab-presenca':'presenca',
+    };
+    const id = activeTab.id;
+    if (topicMap[id])             renderTopicList(topicMap[id]);
+    else if (id === 'tab-avaliacao')  renderAvaliacao();
+    else if (id === 'tab-patrol')     renderPatrolList();
+    else if (id === 'tab-lideres')    renderLideresContent();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+// ─── Populate all year filter selects dynamically ────────────────────────────
+function populateYearSelects() {
+    const ja   = currentLang === 'ja';
+    const anos = getAnos().sort((a,b) => parseInt(a)-parseInt(b));
+    const curNendo = calcNendo(new Date().toISOString().slice(0,10));
+    const selectIds = [
+        'seg-year','qual-year','coop-year','moral-year','prod-year','pres-year',
+        'patrol-list-year','aval-year','lider-year'
+    ];
+    selectIds.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const current = sel.value;
+        sel.innerHTML = '';
+        anos.forEach(a => {
+            const o = document.createElement('option');
+            o.value = a;
+            o.textContent = ja ? `${a}年度` : `Ano ${a}`;
+            if (a === current || (!current && a === curNendo)) o.selected = true;
+            sel.appendChild(o);
+        });
+        // If previous selection no longer exists, default to curNendo or last
+        if (!anos.includes(sel.value)) {
+            sel.value = anos.includes(curNendo) ? curNendo : (anos[anos.length-1] || '26');
+        }
+    });
+    // Re-render the currently active tab so its list reflects the new year selection
+    refreshAllRenderedContent();
+}
+
+// ─── Fiscal Year management (Configurações) ───────────────────────────────────
+function renderAnosFiscais() {
+    const ja   = currentLang === 'ja';
+    const anos = getAnos().sort((a,b) => parseInt(a)-parseInt(b));
+    const container = document.getElementById('anos-list');
+    if (!container) return;
+    container.innerHTML = '';
+    anos.forEach(a => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:6px;';
+        row.innerHTML = `
+            <span style="font-weight:700;font-size:15px;">📅 ${ja ? `${a}年度` : `Ano ${a}`}</span>
+            <button onclick="deleteAnoFiscal('${a}')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600;">
+                🗑️ ${ja?'削除':'Excluir'}
+            </button>`;
+        container.appendChild(row);
+    });
+    if (!anos.length) {
+        container.innerHTML = `<div style="color:#94a3b8;font-size:13px;padding:8px 0;">${ja?'年度が登録されていません':'Nenhum ano fiscal cadastrado'}</div>`;
+    }
+}
+
+async function addAnoFiscal() {
+    const ja  = currentLang === 'ja';
+    const inp = document.getElementById('new-ano-input');
+    if (!inp) return;
+    const val = inp.value.trim().replace(/[^0-9]/g, '');
+    if (!val || val.length > 4) {
+        alert(ja ? '⚠️ 有効な年を入力してください（例: 26 または 2026）' : '⚠️ Informe um ano válido (ex: 26 ou 2026)');
+        return;
+    }
+    const ano = val.slice(-2);
+    if (_anos.includes(ano)) {
+        alert(ja ? `⚠️ ${ano}年度はすでに登録されています` : `⚠️ O ano fiscal ${ano} já existe`);
+        return;
+    }
+    await sb.from('anos').insert([{ ano }]);
+    _anos.push(ano);
+    inp.value = '';
+    populateYearSelects();
+    renderAnosFiscais();
+    initDatePickers();
+}
+
+async function deleteAnoFiscal(ano) {
+    const ja = currentLang === 'ja';
+    if (!confirm(ja ? `${ano}年度を本当に削除しますか？` : `Deseja realmente excluir o ano fiscal ${ano}?`)) return;
+    if (!confirm(ja ? `⚠️ この年度の全データも削除されます。\n続行しますか？` : `⚠️ Todos os dados deste ano também serão excluídos.\nDeseja continuar?`)) return;
+
+    // Cascade delete in Supabase
+    await Promise.all([
+        sb.from('registros').delete().eq('nendo', ano),
+        sb.from('patrols').delete().eq('nendo', ano),
+        sb.from('lider_feedbacks').delete().eq('nendo', ano),
+        sb.from('anos').delete().eq('ano', ano),
+    ]);
+    _registros = _registros.filter(r => r.nendo !== ano);
+    _patrols   = _patrols.filter(p => p.nendo !== ano);
+    _liderFbs  = _liderFbs.filter(f => f.nendo !== ano);
+    _anos      = _anos.filter(a => a !== ano);
+
+    populateYearSelects();
+    renderAnosFiscais();
+    initDatePickers();
+    alert(ja ? `✅ ${ano}年度を削除しました` : `✅ Ano fiscal ${ano} excluído com sucesso`);
+}
+
+// ─── Responsáveis management ──────────────────────────────────────────────────
+function renderResponsaveis() {
+    const ja   = currentLang === 'ja';
+    const list = getResp();
+    const box  = document.getElementById('resp-list');
+    if (!box) return;
+
+    if (!list.length) {
+        box.innerHTML = `<div class="empty-msg">📭 ${ja ? '担当者が登録されていません' : 'Nenhum responsável cadastrado'}</div>`;
+        return;
+    }
+    box.innerHTML = list.map(r => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;background:#fafbff;">
+            <span style="font-size:14px;font-weight:600;color:#1e293b;">🧑‍💼 ${esc(r.nome)}</span>
+            <button class="btn-danger btn-sm" onclick="deleteResponsavel(${r.id})">🗑️ ${ja ? '削除' : 'Excluir'}</button>
+        </div>`).join('');
+}
+
+async function addResponsavel() {
+    const ja   = currentLang === 'ja';
+    const inp  = document.getElementById('new-resp-input');
+    const nome = inp?.value.trim();
+    if (!nome) { alert(ja ? '名前を入力してください' : 'Digite o nome do responsável'); return; }
+    if (_responsaveis.some(r => r.nome.toLowerCase() === nome.toLowerCase())) {
+        alert(ja ? 'この担当者はすでに登録されています' : 'Este responsável já está cadastrado');
+        return;
+    }
+    const { data, error } = await sb.from('responsaveis').insert([{ nome }]).select().single();
+    if (error) { alert('Erro: ' + error.message); return; }
+    _responsaveis.push({ id: data.id, nome });
+    inp.value = '';
+    renderResponsaveis();
+    populateRespSelects();
+}
+
+async function deleteResponsavel(id) {
+    const ja = currentLang === 'ja';
+    if (!confirm(ja ? 'この担当者を削除しますか？' : 'Deseja excluir este responsável?')) return;
+    await sb.from('responsaveis').delete().eq('id', id);
+    _responsaveis = _responsaveis.filter(r => r.id !== id);
+    renderResponsaveis();
+    populateRespSelects();
+}
+
+function populateRespSelects() {
+    const list = getResp();
+    ['novoResp', 'patrol-resp'].forEach(selId => {
+        const sel = document.getElementById(selId);
+        if (!sel) return;
+        const prev = sel.value;
+        while (sel.options.length > 1) sel.remove(1);
+        list.forEach(r => {
+            const o = document.createElement('option');
+            o.value = r.nome;
+            o.textContent = r.nome;
+            if (r.nome === prev) o.selected = true;
+            sel.appendChild(o);
+        });
+        if (![...sel.options].some(o => o.value === prev)) sel.value = '';
+    });
+}
+
+// ─── Logo management ──────────────────────────────────────────────────────────
+async function setLogo(data) {
+    _logo = data;
+    await sb.from('configuracoes').upsert({ id: 1, logo_data: data });
+}
+
+function renderLogoPreview() {
+    const logo = getLogo();
+    const img  = document.getElementById('logo-preview-img');
+    const empty = document.getElementById('logo-preview-empty');
+    const rmBtn = document.getElementById('logo-remove-btn');
+    if (!img) return;
+    if (logo) {
+        img.src = logo;
+        img.style.display = 'block';
+        if (empty)  empty.style.display  = 'none';
+        if (rmBtn)  rmBtn.style.display  = '';
+    } else {
+        img.src = '';
+        img.style.display = 'none';
+        if (empty)  empty.style.display  = '';
+        if (rmBtn)  rmBtn.style.display  = 'none';
+    }
+}
+
+function handleLogoUpload(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+    const ja = currentLang === 'ja';
+    if (file.size > 2 * 1024 * 1024) {
+        alert(ja ? '⚠️ ファイルが大きすぎます（最大2MB）' : '⚠️ Arquivo muito grande (máx. 2MB)');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+        // Compress logo to max ~200px height for storage efficiency
+        const dataUrl = e.target.result;
+        const imgEl = new Image();
+        imgEl.onload = () => {
+            const maxH = 200;
+            const scale = imgEl.height > maxH ? maxH / imgEl.height : 1;
+            const canvas = document.createElement('canvas');
+            canvas.width  = Math.round(imgEl.width  * scale);
+            canvas.height = Math.round(imgEl.height * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+            const compressed = canvas.toDataURL('image/png', 0.9);
+            setLogo(compressed).then(() => {
+                renderLogoPreview();
+                document.getElementById('logo-upload-input').value = '';
+                alert(ja ? '✅ ロゴを保存しました' : '✅ Logo salvo com sucesso');
+            });
+        };
+        imgEl.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+}
+
+async function removeLogo() {
+    const ja = currentLang === 'ja';
+    if (!confirm(ja ? 'ロゴを削除しますか？' : 'Remover o logo?')) return;
+    await setLogo('');
+    renderLogoPreview();
+}
+
+// ─── Supabase Auth ────────────────────────────────────────────────────────────
+async function initWithAuth() {
+    // Show login screen while checking session
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app-wrapper').style.display  = 'none';
+
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+        await startApp();
+    }
+    // Listen for future auth changes
+    sb.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            await startApp();
+        } else if (event === 'SIGNED_OUT') {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-wrapper').style.display  = 'none';
+        }
+    });
+}
+
+async function doLogin() {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl    = document.getElementById('login-error');
+    const btn      = document.getElementById('login-btn');
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.textContent = '⏳ Entrando...';
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    btn.disabled = false; btn.textContent = '🔐 Entrar / ログイン';
+    if (error) {
+        errEl.textContent = 'Email ou senha incorretos. / メールまたはパスワードが間違っています。';
+        errEl.style.display = 'block';
+    }
+}
+
+async function doLogout() {
+    await sb.auth.signOut();
+}
+
+async function startApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-wrapper').style.display  = '';
+    await loadAllData();
+    initApp();
+}
+
+// ─── App initialisation ───────────────────────────────────────────────────────
+function initApp() {
+    currentLang = localStorage.getItem('lang26') || 'ja';
+    applyLanguage();
+    populateAllEmpSelects();
+    populateYearSelects();
+    renderEmpList();
+    renderAnosFiscais();
+    renderResponsaveis();
+    renderLogoPreview();
+    populateRespSelects();
+    renderPatrolList();
+    initDatePickers();
+}
+
+window.addEventListener('DOMContentLoaded', initWithAuth);
+</script>
+</div><!-- /#app-wrapper -->
+</body>
+</html>
