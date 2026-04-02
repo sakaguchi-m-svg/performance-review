@@ -16,6 +16,10 @@
         header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
         .lang-btn { background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.6); padding: 7px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; color: white; transition: all 0.2s; }
         .lang-btn:hover { background: rgba(255,255,255,0.3); }
+        .lang-switcher { display:flex; gap:3px; background:rgba(0,0,0,0.25); border-radius:8px; padding:3px; }
+        .lang-switcher button { background:transparent; border:none; padding:5px 11px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:700; color:rgba(255,255,255,0.65); transition:all 0.2s; white-space:nowrap; }
+        .lang-switcher button:hover { background:rgba(255,255,255,0.2); color:white; }
+        .lang-switcher button.lang-active { background:rgba(255,255,255,0.95); color:#1a365d; }
 
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { padding: 10px 16px; background: white; border: none; cursor: pointer; font-size: 13px; font-weight: 600; border-radius: 8px 8px 0 0; transition: all 0.2s; color: #666; white-space: nowrap; border-bottom: 2px solid transparent; }
@@ -310,7 +314,11 @@
         <h1>🏭 <span data-ja="社員評価システム" data-pt="Sistema de Avaliação" data-id="Sistem Evaluasi Karyawan">社員評価システム</span></h1>
     </div>
     <div style="display:flex;gap:10px;align-items:center;">
-        <button id="lang-toggle-btn" class="lang-btn" onclick="toggleLanguage()">🇧🇷 PT</button>
+        <div class="lang-switcher">
+            <button id="lang-btn-ja" onclick="setLanguage('ja')">🇯🇵 JA</button>
+            <button id="lang-btn-pt" onclick="setLanguage('pt')">🇧🇷 PT</button>
+            <button id="lang-btn-id" onclick="setLanguage('id')">🇮🇩 ID</button>
+        </div>
         <button class="lang-btn" onclick="doLogout()" style="background:rgba(255,255,255,0.15);">🚪 Sair</button>
     </div>
 </header>
@@ -1215,14 +1223,8 @@ const LIDER_TOPICOS = [
 ];
 
 // ─── Language ────────────────────────────────────────────────────────────────
-function toggleLanguage() {
-    if (currentLang === 'ja') {
-        currentLang = 'pt';
-    } else if (currentLang === 'pt') {
-        currentLang = 'id';
-    } else {
-        currentLang = 'ja';
-    }
+function setLanguage(lang) {
+    currentLang = lang;
     localStorage.setItem('lang26', currentLang);
     applyLanguage();
     populateAllEmpSelects();
@@ -1265,19 +1267,11 @@ function applyLanguage() {
         }
         el.placeholder = text;
     });
-    // Update language toggle button to show next language
-    const langBtn = document.getElementById('lang-toggle-btn');
-    if (langBtn) {
-        let nextLabel;
-        if (currentLang === 'ja') {
-            nextLabel = '🇧🇷 PT';
-        } else if (currentLang === 'pt') {
-            nextLabel = '🇮🇩 ID';
-        } else {
-            nextLabel = '🇯🇵 JA';
-        }
-        langBtn.textContent = nextLabel;
-    }
+    // Update language switcher buttons — highlight the active language
+    ['ja','pt','id'].forEach(lang => {
+        const btn = document.getElementById('lang-btn-' + lang);
+        if (btn) btn.classList.toggle('lang-active', lang === currentLang);
+    });
 }
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
