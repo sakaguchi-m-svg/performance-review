@@ -965,6 +965,74 @@
         </table>
     </div>
 
+    <!-- SECÇÃO 5B: SISTEMA DE BÔNUS EM ¥ -->
+    <div class="card">
+        <h3 style="margin-top:0;color:#1a365d;">💴 <span data-ja="賞与システム (¥)" data-pt="Sistema de Bônus (¥)" data-id="Sistem Bonus (¥)">Sistema de Bônus (¥)</span></h3>
+        <p style="color:#64748b;font-size:13px;margin-top:0;"
+            data-ja="スコアに比例して最大¥100の賞与が計算されます。安全・品質は各¥20、他のトピックは各¥15です。"
+            data-pt="O bônus é calculado proporcionalmente ao score de cada tópico, com máximo de ¥100. Segurança e Qualidade valem ¥20 cada; os demais valem ¥15 cada."
+            data-id="Bonus dihitung proporsional terhadap skor setiap topik, maksimum ¥100. Keselamatan dan Kualitas senilai ¥20 masing-masing; topik lainnya ¥15 masing-masing.">
+            O bônus é calculado proporcionalmente ao score de cada tópico, com máximo de ¥100.
+        </p>
+
+        <table class="class-table">
+            <thead>
+                <tr>
+                    <th data-ja="トピック" data-pt="Tópico" data-id="Topik">Tópico</th>
+                    <th data-ja="最大値" data-pt="Valor Máx." data-id="Nilai Maks.">Valor Máx.</th>
+                    <th data-ja="計算方法" data-pt="Como é calculado" data-id="Cara Menghitung">Como é calculado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background:#fff5f5;">
+                    <td><span style="font-size:16px;">🔒</span> <strong style="color:#b91c1c;" data-ja="安全" data-pt="Segurança" data-id="Keselamatan">Segurança</strong> ★</td>
+                    <td><strong style="color:#ef4444;">¥20</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥20" data-pt="score ÷ 10 × ¥20" data-id="skor ÷ 10 × ¥20">score ÷ 10 × ¥20</td>
+                </tr>
+                <tr style="background:#f0fdf4;">
+                    <td><span style="font-size:16px;">✅</span> <strong style="color:#065f46;" data-ja="品質" data-pt="Qualidade" data-id="Kualitas">Qualidade</strong> ★</td>
+                    <td><strong style="color:#10b981;">¥20</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥20" data-pt="score ÷ 10 × ¥20" data-id="skor ÷ 10 × ¥20">score ÷ 10 × ¥20</td>
+                </tr>
+                <tr>
+                    <td><span style="font-size:16px;">🤝</span> <span data-ja="協力" data-pt="Cooperação" data-id="Kerjasama">Cooperação</span></td>
+                    <td><strong style="color:#3b82f6;">¥15</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥15" data-pt="score ÷ 10 × ¥15" data-id="skor ÷ 10 × ¥15">score ÷ 10 × ¥15</td>
+                </tr>
+                <tr>
+                    <td><span style="font-size:16px;">💡</span> <span data-ja="モラル" data-pt="Moral" data-id="Moral">Moral</span></td>
+                    <td><strong style="color:#f59e0b;">¥15</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥15" data-pt="score ÷ 10 × ¥15" data-id="skor ÷ 10 × ¥15">score ÷ 10 × ¥15</td>
+                </tr>
+                <tr>
+                    <td><span style="font-size:16px;">📈</span> <span data-ja="生産性" data-pt="Produtividade" data-id="Produktivitas">Produtividade</span></td>
+                    <td><strong style="color:#8b5cf6;">¥15</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥15" data-pt="score ÷ 10 × ¥15" data-id="skor ÷ 10 × ¥15">score ÷ 10 × ¥15</td>
+                </tr>
+                <tr>
+                    <td><span style="font-size:16px;">📅</span> <span data-ja="出勤" data-pt="Presença" data-id="Kehadiran">Presença</span></td>
+                    <td><strong style="color:#06b6d4;">¥15</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="スコア÷10×¥15" data-pt="score ÷ 10 × ¥15" data-id="skor ÷ 10 × ¥15">score ÷ 10 × ¥15</td>
+                </tr>
+                <tr style="background:#eff6ff;">
+                    <td><span style="font-size:16px;">👑</span> <span data-ja="リーダーボーナス（リーダーのみ）" data-pt="Bônus Líder (apenas líderes)" data-id="Bonus Pemimpin (khusus pemimpin)">Bônus Líder (apenas líderes)</span></td>
+                    <td><strong style="color:#2b6cb0;">+¥20</strong></td>
+                    <td style="font-size:12px;color:#475569;" data-ja="カーゴが「リーダー」の場合に自動加算" data-pt="Somado automaticamente se cargo = Líder" data-id="Ditambahkan otomatis jika jabatan = Pemimpin">Somado automaticamente se cargo = Líder</td>
+                </tr>
+                <tr style="background:#f0fdf4;font-weight:700;">
+                    <td colspan="2" data-ja="最大合計（リーダー）" data-pt="Total máximo (Líder)" data-id="Total maksimum (Pemimpin)">Total máximo (Líder)</td>
+                    <td><strong style="color:#065f46;font-size:16px;">¥120</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top:12px;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400e;">
+            ★ <strong data-ja="安全・品質は重点項目" data-pt="Segurança e Qualidade são prioritárias" data-id="Keselamatan dan Kualitas adalah prioritas">Segurança e Qualidade são prioritárias.</strong>
+            <span data-ja="スコア0の場合は賞与も¥0になります。例：安全スコア0→安全分¥0（-¥20）" data-pt="Se o score for 0, o bônus daquele tópico será ¥0. Ex: score 0 em Segurança = -¥20 do total." data-id="Jika skor 0, bonus topik tersebut menjadi ¥0. Contoh: skor Keselamatan 0 = -¥20 dari total.">
+            Se o score for 0, o bônus daquele tópico será ¥0. Ex: score 0 em Segurança = perde ¥20 do total.</span>
+        </div>
+    </div>
+
     <!-- SECÇÃO 6: PATRULHA -->
     <div class="card">
         <h3 style="margin-top:0;color:#1a365d;">🚶 <span data-ja="巡回（パトロール）" data-pt="Patrulhas e seu impacto" data-id="Patroli">Patrulhas e seu impacto</span></h3>
@@ -1104,13 +1172,29 @@ let radarChart2 = null;
 
 // ─── Topic metadata ──────────────────────────────────────────────────────────
 const TOPICS = {
-    seguranca:     { ja:'安全',   pt:'Segurança',     id:'Keselamatan',  icon:'🔒', color:'#ef4444' },
-    qualidade:     { ja:'品質',   pt:'Qualidade',     id:'Kualitas',     icon:'✅', color:'#10b981' },
-    cooperacao:    { ja:'協力',   pt:'Cooperação',    id:'Kerjasama',    icon:'🤝', color:'#3b82f6' },
-    moral:         { ja:'モラル', pt:'Moral',         id:'Moral',        icon:'💡', color:'#f59e0b' },
-    produtividade: { ja:'生産性', pt:'Produtividade', id:'Produktivitas', icon:'📈', color:'#8b5cf6' },
-    presenca:      { ja:'出勤',   pt:'Presença',      id:'Kehadiran',    icon:'📅', color:'#06b6d4' },
+    seguranca:     { ja:'安全',   pt:'Segurança',     id:'Keselamatan',  icon:'🔒', color:'#ef4444', yen:20 },
+    qualidade:     { ja:'品質',   pt:'Qualidade',     id:'Kualitas',     icon:'✅', color:'#10b981', yen:20 },
+    cooperacao:    { ja:'協力',   pt:'Cooperação',    id:'Kerjasama',    icon:'🤝', color:'#3b82f6', yen:15 },
+    moral:         { ja:'モラル', pt:'Moral',         id:'Moral',        icon:'💡', color:'#f59e0b', yen:15 },
+    produtividade: { ja:'生産性', pt:'Produtividade', id:'Produktivitas', icon:'📈', color:'#8b5cf6', yen:15 },
+    presenca:      { ja:'出勤',   pt:'Presença',      id:'Kehadiran',    icon:'📅', color:'#06b6d4', yen:15 },
 };
+const LEADER_BONUS_YEN = 20; // bônus adicional para líderes
+
+// ─── Cálculo de Bônus em ¥ ───────────────────────────────────────────────────
+function calcBonus(summaries, isLeader) {
+    let total = 0;
+    const breakdown = {};
+    Object.entries(TOPICS).forEach(([key, tp]) => {
+        const score = summaries[key] ? summaries[key].score : 5.0;
+        // Proporção: score 0-10 → 0% a 100% do peso em ¥
+        const earned = Math.round((score / 10) * tp.yen);
+        breakdown[key] = { earned, max: tp.yen, score };
+        total += earned;
+    });
+    const leaderBonus = isLeader ? LEADER_BONUS_YEN : 0;
+    return { total, leaderBonus, grandTotal: total + leaderBonus, breakdown };
+}
 
 // ─── Helper translation function ────────────────────────────────────────────────
 function t(ja, pt, id) {
@@ -1637,7 +1721,10 @@ function updateProdFields() {
 }
 
 // ─── Save record ─────────────────────────────────────────────────────────────
+let _saving = false; // flag to prevent double-click
 async function saveRecord() {
+    if (_saving) return; // prevent duplicate saves
+
     // Force-sync the hidden date field in case onchange wasn't triggered
     const dateMode = document.querySelector('input[name="dateMode"]:checked')?.value || 'month';
     if (dateMode === 'month') syncMonthDate(); else syncFullDate();
@@ -1647,12 +1734,18 @@ async function saveRecord() {
     const date  = document.getElementById('novoDate').value;
     const time  = document.getElementById('novoTime').value;
 
-    if (!empId) { alert(currentLang==='ja'?'社員を選択してください':'Selecione um funcionário'); return; }
-    if (!topic) { alert(currentLang==='ja'?'トピックを選択してください':'Selecione um tópico'); return; }
-    if (!date)  { alert(currentLang==='ja'?'日付を入力してください':'Informe a data'); return; }
+    const ja2 = currentLang === 'ja';
+    if (!empId) { alert(ja2?'社員を選択してください':'Selecione um funcionário'); return; }
+    if (!topic) { alert(ja2?'トピックを選択してください':'Selecione um tópico'); return; }
+    if (!date)  { alert(ja2?'日付を入力してください':'Informe a data'); return; }
 
     const emp = getEmployees().find(e => e.id == empId);
     if (!emp) return;
+
+    // Disable save button to prevent double-click
+    _saving = true;
+    const saveBtn = document.querySelector('button[onclick="saveRecord()"]');
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = '0.6'; }
 
     const nendo = calcNendo(date);
 
@@ -1733,14 +1826,16 @@ async function saveRecord() {
 
     const respNome = document.getElementById('novoResp')?.value || '';
 
+    // Use timestamp + random suffix to avoid duplicate IDs
+    const recordId = Date.now() * 1000 + Math.floor(Math.random() * 1000);
+
     const record = {
-        id: Date.now(),
+        id: recordId,
         ban: emp.ban, jpNome: emp.jpNome, ptNome: emp.ptNome,
         date, time, topic, nendo, dados, anexo, anexoType, anexoName,
         resp: respNome,
     };
 
-    const ja2 = currentLang === 'ja';
     try {
         const { error } = await sb.from('registros').insert([{
             id: record.id, ban: record.ban, jp_nome: record.jpNome, pt_nome: record.ptNome,
@@ -1752,11 +1847,16 @@ async function saveRecord() {
         _registros.push(record);
     } catch (e) {
         alert(ja2 ? '⚠️ 保存中にエラーが発生しました: ' + e.message : '⚠️ Erro ao salvar: ' + e.message);
+        _saving = false;
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = ''; }
         return;
     }
 
+    _saving = false;
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = ''; }
+
     clearNovoForm();
-    try { renderAvaliacao(); } catch(_e) {} // update chart live; ignore errors so alert always fires
+    try { renderAvaliacao(); } catch(_e) {}
 
     alert(ja2 ? '✅ 保存しました' : '✅ Salvo com sucesso!');
 }
@@ -2161,6 +2261,10 @@ function renderAvaliacao() {
     const summaries = summariesTemp;
     const scores    = scoresTemp;
 
+    // ¥ Bonus calculation
+    const isLeader = emp.cargo === 'lider';
+    const bonus = calcBonus(summaries, isLeader);
+
     // Summary boxes
     const summaryBoxes = Object.entries(TOPICS).map(([key, tp]) => {
         const s = summaries[key];
@@ -2249,6 +2353,51 @@ function renderAvaliacao() {
         <h2>${esc(empName)} <span style="font-size:13px;color:#888;font-weight:400;">${emp.ban} | ${ja?'年度':'Ano'}: ${year}</span></h2>
         <div class="summary-grid">${summaryBoxes}</div>
     </div>
+
+    <!-- ¥ Bônus Panel -->
+    <div class="card">
+        <h2>💴 ${ja ? '賞与計算 (¥)' : (currentLang==='id' ? 'Kalkulasi Bonus (¥)' : 'Cálculo de Bônus (¥)')}</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            ${Object.entries(TOPICS).map(([key, tp]) => {
+                const b = bonus.breakdown[key];
+                const pct = Math.round((b.score / 10) * 100);
+                const isCritical = key === 'seguranca' || key === 'qualidade';
+                return `<div style="flex:1;min-width:130px;background:#f8faff;border:1.5px solid ${isCritical?'#fca5a5':'#e2e8f0'};border-radius:10px;padding:10px 12px;">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                        <span style="font-size:18px;">${tp.icon}</span>
+                        <span style="font-size:12px;font-weight:700;color:#1a365d;">${ja ? tp.ja : tp.pt}</span>
+                        ${isCritical ? `<span style="font-size:10px;background:#fee2e2;color:#b91c1c;border-radius:4px;padding:1px 5px;">★</span>` : ''}
+                    </div>
+                    <div style="background:#e2e8f0;border-radius:4px;height:6px;margin-bottom:6px;overflow:hidden;">
+                        <div style="width:${pct}%;height:100%;background:${tp.color};border-radius:4px;transition:width 0.5s;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                        <span style="font-size:18px;font-weight:800;color:${tp.color};">¥${b.earned}</span>
+                        <span style="font-size:11px;color:#888;">/ ¥${b.max}</span>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+        <div style="background:linear-gradient(135deg,#1a365d,#2b6cb0);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+                <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-bottom:4px;">${ja?'基本合計':'Total Base'} (${ja?'最大':'máx'} ¥100)</div>
+                <div style="color:white;font-size:28px;font-weight:800;">¥${bonus.total} <span style="font-size:14px;opacity:0.7;">/ ¥100</span></div>
+            </div>
+            ${isLeader ? `<div style="text-align:right;">
+                <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-bottom:4px;">👑 ${ja?'リーダーボーナス':'Bônus Líder'}</div>
+                <div style="color:#fbbf24;font-size:22px;font-weight:800;">+ ¥${LEADER_BONUS_YEN}</div>
+            </div>` : ''}
+            <div style="text-align:right;border-left:1px solid rgba(255,255,255,0.3);padding-left:20px;">
+                <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-bottom:4px;">${ja?'合計':'Total Final'}</div>
+                <div style="color:#86efac;font-size:32px;font-weight:900;">¥${bonus.grandTotal}</div>
+            </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#888;text-align:center;">
+            ★ ${ja?'安全・品質は重点項目（各¥20）。他は各¥15。':'Segurança e Qualidade são prioritárias (¥20 cada). Demais tópicos: ¥15 cada.'}
+            ${ja?' スコアに比例して支給':'Valor proporcional ao score.'}
+        </div>
+    </div>
+
     <div class="card">
         <h2>📊 <span>${ja?'総合スコア — 平均':'Pontuação Geral — Média'}</span></h2>
         <div style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;align-items:center;margin-bottom:28px;">
