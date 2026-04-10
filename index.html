@@ -3711,6 +3711,10 @@ async function doGoogleLogin() {
 
 async function doLogout() {
     await sb.auth.signOut();
+    // Force UI back to login screen immediately
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app-wrapper').style.display  = 'none';
+    document.getElementById('login-error').style.display  = 'none';
 }
 
 async function startApp() {
